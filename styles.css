@@ -1,0 +1,607 @@
+/* =========================================================
+   Vibe Coding 分享 PPT — 自定义主题
+   ========================================================= */
+
+:root {
+  --bg-0: #0a0a14;
+  --bg-1: #11111e;
+  --bg-2: #1a1a2e;
+  --fg: #e6e6f0;
+  --fg-muted: #a0a0b8;
+  --accent: #7c5cff;       /* electric purple */
+  --accent-2: #00d4ff;     /* cyan */
+  --accent-3: #ff5cae;     /* magenta */
+  --accent-4: #5cffb1;     /* mint */
+  --warn: #ffb86b;
+  --danger: #ff5c7c;
+  --code-bg: #14142b;
+  --border: rgba(124, 92, 255, 0.25);
+  --grid: rgba(255, 255, 255, 0.04);
+}
+
+/* ---------- Reveal 全局覆盖 ---------- */
+.reveal {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  color: var(--fg);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.reveal-viewport {
+  background:
+    radial-gradient(ellipse at top left, rgba(124, 92, 255, 0.18), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(0, 212, 255, 0.12), transparent 50%),
+    var(--bg-0);
+  background-attachment: fixed;
+}
+
+/* 网格背景 */
+.reveal-viewport::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.reveal .slides > section,
+.reveal .slides > section > section {
+  text-align: left;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+/* Reveal 默认 .slides container 是 1600x900 logical canvas */
+.reveal .slides {
+  text-align: left;
+}
+
+/* ---------- 标题层级 ---------- */
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: var(--fg);
+  text-shadow: none;
+  margin-bottom: 0.4em;
+}
+
+.reveal h1 { font-size: 3.6em; line-height: 1.05; }
+.reveal h2 { font-size: 2.2em; line-height: 1.15; }
+.reveal h3 { font-size: 1.5em; line-height: 1.2; color: var(--accent-2); }
+.reveal h4 { font-size: 1.1em; color: var(--fg-muted); font-weight: 600; }
+
+.reveal p { font-size: 0.95em; line-height: 1.55; color: var(--fg); }
+.reveal li { font-size: 0.95em; line-height: 1.55; margin: 0.25em 0; }
+
+.reveal strong { color: var(--accent-2); font-weight: 600; }
+.reveal em { color: var(--accent-4); font-style: normal; font-weight: 500; }
+
+/* ---------- Gradient Text ---------- */
+.gradient {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 50%, var(--accent-3) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.gradient-cool {
+  background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent-4) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ---------- 代码块 ---------- */
+.reveal pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1em 1.2em;
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-size: 0.55em;
+  line-height: 1.55;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  width: auto;
+  max-width: 100%;
+}
+
+.reveal code {
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  background: rgba(124, 92, 255, 0.15);
+  color: var(--accent-2);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.reveal pre code {
+  background: transparent;
+  color: var(--fg);
+  padding: 0;
+  font-size: 1em;
+}
+
+/* ---------- 链接 ---------- */
+.reveal a {
+  color: var(--accent-2);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--accent-2);
+}
+
+/* ---------- 卡片/Box 组件 ---------- */
+.slide-content {
+  position: relative;
+  z-index: 1;
+  padding: 40px 80px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.slide-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8em;
+  margin-bottom: 2vh;
+}
+
+.slide-header .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  color: var(--accent);
+  background: rgba(124, 92, 255, 0.1);
+  padding: 0.2em 0.7em;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
+.slide-header .kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.card {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.4em 1.6em;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(124, 92, 255, 0.5);
+}
+
+.card h4 {
+  margin-top: 0;
+  color: var(--accent-2);
+}
+
+.card .icon {
+  font-size: 1.6em;
+  margin-bottom: 0.3em;
+  display: inline-block;
+}
+
+/* ---------- 网格 ---------- */
+.grid {
+  display: grid;
+  gap: 1em;
+}
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-5 { grid-template-columns: repeat(5, 1fr); }
+
+/* ---------- Pill / Tag ---------- */
+.pill {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7em;
+  background: rgba(124, 92, 255, 0.15);
+  color: var(--accent-2);
+  border: 1px solid var(--border);
+  margin: 0.15em;
+}
+
+.pill.warn { background: rgba(255, 184, 107, 0.12); color: var(--warn); border-color: rgba(255, 184, 107, 0.3); }
+.pill.ok { background: rgba(92, 255, 177, 0.12); color: var(--accent-4); border-color: rgba(92, 255, 177, 0.3); }
+.pill.hot { background: rgba(255, 92, 174, 0.12); color: var(--accent-3); border-color: rgba(255, 92, 174, 0.3); }
+
+/* ---------- 数字看板 ---------- */
+.metric {
+  text-align: center;
+  padding: 1em 0.6em;
+}
+.metric .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2.6em;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+.metric .label {
+  font-size: 0.75em;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 0.4em;
+}
+
+/* ---------- 表格 ---------- */
+.reveal table {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0;
+  font-size: 0.7em;
+  width: 100%;
+}
+
+.reveal table th {
+  background: rgba(124, 92, 255, 0.15);
+  color: var(--accent-2);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.6em 0.9em;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.85em;
+}
+
+.reveal table td {
+  padding: 0.55em 0.9em;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--fg);
+}
+
+.reveal table tr:hover td { background: rgba(124, 92, 255, 0.04); }
+
+/* ---------- 引用 ---------- */
+.reveal blockquote {
+  background: linear-gradient(160deg, rgba(124, 92, 255, 0.08), rgba(0, 212, 255, 0.04));
+  border-left: 3px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  padding: 1em 1.4em;
+  margin: 1em 0;
+  font-style: normal;
+  font-size: 0.95em;
+  color: var(--fg);
+  box-shadow: none;
+  width: auto;
+}
+.reveal blockquote p { margin: 0; }
+
+/* ---------- 分隔符 ---------- */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 1.5em 0;
+}
+
+/* ---------- 封面 ---------- */
+.cover {
+  text-align: center !important;
+  width: 100%;
+  padding: 60px;
+  box-sizing: border-box;
+}
+
+.cover > div {
+  width: 100%;
+  max-width: 1200px;
+  text-align: center;
+}
+
+.cover .author-line {
+  justify-content: center;
+}
+
+.cover .super-title {
+  font-size: 6em;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 0.3em;
+}
+
+.cover .subtitle {
+  font-size: 1.4em;
+  color: var(--fg-muted);
+  font-weight: 400;
+  margin: 0 auto 2.5em;
+  max-width: 38ch;
+}
+
+.cover .author-line {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  color: var(--fg-muted);
+  display: flex;
+  gap: 1.5em;
+  align-items: center;
+}
+
+.cover .author-line span::before {
+  content: '◆ ';
+  color: var(--accent);
+}
+
+/* ---------- 横幅大字 ---------- */
+.banner {
+  font-size: 4em;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  text-align: center;
+  padding: 0 4vw;
+}
+
+/* ---------- 居中节标题页 ---------- */
+.section-divider {
+  text-align: center;
+  width: 100%;
+  padding: 60px;
+  box-sizing: border-box;
+}
+
+.section-divider .part {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent);
+  letter-spacing: 0.3em;
+  font-size: 1em;
+  margin-bottom: 1em;
+}
+.section-divider .title {
+  font-size: 4.5em;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.section-divider .desc {
+  margin: 1.5em auto 0;
+  color: var(--fg-muted);
+  font-size: 1.1em;
+  max-width: 60ch;
+}
+
+/* ---------- 流水线（横向步骤） ---------- */
+.pipeline {
+  display: flex;
+  align-items: stretch;
+  gap: 0.8em;
+  margin-top: 1em;
+}
+
+.pipeline .step {
+  flex: 1;
+  background: linear-gradient(180deg, rgba(124, 92, 255, 0.08), transparent);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1em 0.8em;
+  position: relative;
+}
+
+.pipeline .step .step-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7em;
+  color: var(--accent);
+}
+.pipeline .step .step-title {
+  font-weight: 700;
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+  color: var(--accent-2);
+  font-size: 0.95em;
+}
+.pipeline .step p {
+  font-size: 0.75em;
+  color: var(--fg-muted);
+  margin: 0;
+}
+
+.pipeline .step::after {
+  content: '→';
+  position: absolute;
+  right: -0.7em;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-size: 1.4em;
+  z-index: 2;
+  font-weight: 700;
+}
+.pipeline .step:last-child::after { content: ''; }
+
+/* ---------- 项目 logo / 标记 ---------- */
+.project-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8em;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  padding: 0.3em 0.7em;
+  border-radius: 8px;
+  color: var(--accent-2);
+}
+
+.project-tag::before {
+  content: '⬢';
+  color: var(--accent);
+}
+
+/* ---------- 控制 reveal 默认导航 ---------- */
+.reveal .controls {
+  color: var(--accent);
+}
+.reveal .progress {
+  color: var(--accent);
+  background: rgba(255, 255, 255, 0.05);
+  height: 4px;
+}
+
+/* ---------- 列表样式 ---------- */
+.reveal ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.reveal ul li {
+  position: relative;
+  padding-left: 1.4em;
+}
+
+.reveal ul li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.reveal ol { padding-left: 1.5em; }
+.reveal ol li::marker { color: var(--accent); font-weight: 700; }
+
+/* ---------- 工具图标 ---------- */
+.tool-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  background: linear-gradient(160deg, rgba(124, 92, 255, 0.06), rgba(0, 212, 255, 0.02));
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.2em;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.tool-card .badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65em;
+  background: var(--accent);
+  color: white;
+  padding: 0.2em 0.6em;
+  border-radius: 4px;
+  align-self: flex-start;
+  font-weight: 600;
+}
+
+.tool-card .name {
+  font-size: 1.4em;
+  font-weight: 700;
+  margin: 0.2em 0;
+}
+
+.tool-card .tagline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7em;
+  color: var(--fg-muted);
+  margin-bottom: 0.5em;
+}
+
+/* ---------- 小字脚注 ---------- */
+.footnote {
+  font-size: 0.7em;
+  color: var(--fg-muted);
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 1.5em;
+}
+
+/* ---------- Mermaid override ---------- */
+.mermaid {
+  background: transparent !important;
+  text-align: center;
+}
+
+/* ---------- skills 网格 ---------- */
+.skills-matrix {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6em;
+}
+.skill-chip {
+  background: rgba(124, 92, 255, 0.06);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.6em 0.7em;
+  font-size: 0.7em;
+}
+.skill-chip .skill-name {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-2);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.2em;
+  font-size: 0.95em;
+}
+.skill-chip .skill-desc {
+  color: var(--fg-muted);
+  font-size: 0.85em;
+  line-height: 1.35;
+}
+.skill-chip.cat-exec { border-color: rgba(0, 212, 255, 0.4); }
+.skill-chip.cat-review { border-color: rgba(255, 92, 174, 0.4); }
+.skill-chip.cat-orch { border-color: rgba(92, 255, 177, 0.4); }
+
+/* ---------- 双栏布局 ---------- */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2em;
+  align-items: start;
+}
+
+/* 案例页：左信息 + 右金句/数据 */
+.case-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 1.5em;
+  align-items: stretch;
+}
+
+/* ---------- 隐藏左下角 logo（默认 reveal） ---------- */
+.reveal .slide-number { font-family: 'JetBrains Mono', monospace; color: var(--fg-muted); }
+
+/* ---------- 强调框 ---------- */
+.callout {
+  border-left: 4px solid var(--accent);
+  padding: 0.8em 1.2em;
+  background: rgba(124, 92, 255, 0.08);
+  border-radius: 0 12px 12px 0;
+  font-size: 0.95em;
+  margin: 1em 0;
+}
+
+.callout.warn { border-color: var(--warn); background: rgba(255, 184, 107, 0.08); }
+.callout.ok { border-color: var(--accent-4); background: rgba(92, 255, 177, 0.06); }
+
+/* ---------- 流光横线 ---------- */
+.glow-line {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent-2), transparent);
+  margin: 0.8em 0 1.2em 0;
+  border-radius: 999px;
+}
