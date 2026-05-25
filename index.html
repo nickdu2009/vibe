@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Vibe Coding · 方法论与实践</title>
+<title>Vibe Coding · AI 高速写代码时，业务正确性怎么保证？</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -14,15 +14,21 @@
 <body>
 <div class="reveal">
 <div class="slides">
+
+<!-- =========================================================
+     SECTION 0 · 立场 (3 pages)
+     ========================================================= -->
+
 <!-- 1. Cover -->
 <section class="cover">
   <div>
     <div class="super-title gradient">Vibe Coding</div>
-    <div class="subtitle">不是让 Agent 更忙，而是让每一步可验证、可交接、可审查</div>
-    <div class="author-line">
+    <div class="subtitle">AI 写代码越快，业务正确性怎么保证？</div>
+    <p style="font-size:1.05em;color:var(--fg-muted);margin-top:0.4em;max-width:34em;margin-left:auto;margin-right:auto">当 AI 代码产出已经超过 review 带宽，真正危险的不是看不完代码，而是业务意图没有被注入、验证和沉淀。</p>
+    <div class="author-line" style="margin-top:2em">
       <span>Nick Du</span>
       <span>Tech Sharing 2026</span>
-      <span>vibe@axinan</span>
+      <span>6 段实践 · 3 平台 · 方法沉淀</span>
     </div>
   </div>
 </section>
@@ -33,653 +39,494 @@
     <span class="num">00</span>
     <span class="kicker">Agenda</span>
   </div>
-  <h2>今天你会带走什么</h2>
+  <h2>这不是 AI 入门 · <span class="gradient-cool">而是三段控制 + 业务判断外置</span></h2>
   <div class="glow-line"></div>
-  <div class="grid grid-2" style="gap:1.2em">
-    <div class="card">
+  <p style="font-size:1.05em;color:var(--fg-muted);margin-top:0.6em">Cursor / Claude Code / Codex 已经使用一段时间了——但一个现实是：<strong>"AI 写完代码，review 一下" 这句话已经不成立了</strong>。问题不只是看不完，而是看不完之后，如何保证代码符合业务意图？</p>
+  <div class="grid grid-4" style="gap:1em;margin-top:1.4em">
+    <div class="card" style="border-left:3px solid var(--accent)">
       <span class="icon">①</span>
-      <h4>Vibe Coding 是什么</h4>
-      <p>从「让 AI 帮我写代码」到「让 AI 在受控流程中协作」的关键转变。</p>
+      <h4>事前 · 注入意图</h4>
+      <p>业务规则 / 契约 / 不变量 / 必做项，<strong>不能等代码写完再补</strong>。</p>
     </div>
-    <div class="card">
+    <div class="card" style="border-left:3px solid var(--accent-2)">
       <span class="icon">②</span>
-      <h4>5 个方法论支柱</h4>
-      <p>Context · Skills · Review Loop · Multi-Agent · Handoff——每一个都来自真实踩坑。</p>
+      <h4>事中 · 校正假设</h4>
+      <p>让 AI 持续暴露假设、影响面、计划和验证缺口。</p>
     </div>
-    <div class="card">
+    <div class="card" style="border-left:3px solid var(--accent-3)">
       <span class="icon">③</span>
-      <h4>2 套自研工具</h4>
-      <p><code>agent-skills</code> 管纪律 · <code>worktrail</code> 管记忆——左右脑分工。</p>
+      <h4>事后 · 证明正确</h4>
+      <p>不是“review 过”，而是<strong>契约 / 不变量 / Golden / 链路 / 证据包</strong>能证明。</p>
     </div>
-    <div class="card">
+    <div class="card" style="border-left:3px solid var(--accent-4)">
       <span class="icon">④</span>
-      <h4>6 个真实项目复盘</h4>
-      <p>从个人 MVP 到企业 Go 微服务，从绿场新建到棕场改造，方法论怎样落地。</p>
+      <h4>业务判断外置</h4>
+      <p>把“为什么这么做、哪些不能改、哪些还没验证”从聊天记录里拿出来。</p>
     </div>
+  </div>
+  <div class="callout ok" style="margin-top:1.5em">
+    每一层 = <strong>一个正确性风险 + 一个机制 + 真实实践印证</strong>
   </div>
 </section>
 
-<!-- 3. Section divider: What -->
-<section class="section-divider">
-  <div class="part">PART · 01</div>
-  <div class="title gradient">什么是 <br/>Vibe Coding</div>
-  <div class="desc">在 Cursor / Claude Code / Codex 都能在一个晚上吐出几千行代码的 2026，<br/>「会用 AI」已经不再是技能，<strong>「让 AI 不出错」才是</strong>。</div>
-</section>
-
-<!-- 4. Not just / But -->
+<!-- 3. Reality · Review Bandwidth + Business Correctness -->
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">01</span>
-    <span class="kicker">Definition</span>
+    <span class="kicker">Reality · 症状与目标</span>
   </div>
-  <h2>Vibe Coding · <span class="gradient-cool">重新定义</span></h2>
+  <h2>症状 · <span class="gradient-cool">AI 代码产出 ≫ review 带宽</span></h2>
   <div class="glow-line"></div>
-  <div class="two-col" style="gap:2.5em">
-    <div>
-      <h3 style="color:var(--danger)">✕ 它不是</h3>
-      <ul>
-        <li>把任务复制进 Chat，等一段代码出来</li>
-        <li>「让 AI 写完，我再 review 一下」</li>
-        <li>把规范、风格、约束放进 prompt 里反复念</li>
-        <li>每个新会话都从「我们的项目是 …」重新解释</li>
-        <li>用 AI 一次性生成完美代码</li>
-      </ul>
+  <div class="two-col" style="gap:2em;margin-top:0.6em">
+    <div style="padding:1.4em;background:linear-gradient(160deg, rgba(124,92,255,0.18), rgba(0,212,255,0.06));border-radius:10px;border-left:3px solid var(--accent)">
+      <h3 style="color:var(--accent);margin-top:0">🤖 AI 写代码端</h3>
+      <div class="metric" style="padding:0.4em 0">
+        <div class="num" style="font-size:2.6em">500–2000</div>
+        <div class="label">行 / 单次输出</div>
+      </div>
+      <p style="font-size:0.92em">分钟级产出 · 仿写已有结构 / boilerplate / 测试 / migration 都能批量出</p>
     </div>
-    <div>
-      <h3 style="color:var(--accent-4)">✓ 它是</h3>
-      <ul>
-        <li>把项目记忆、决策、约定结构化沉淀</li>
-        <li>把工程纪律编码成可复用的 Skill</li>
-        <li>把 AI 的输出当 <em>Proposal</em>，让规则与门禁裁决</li>
-        <li>跨会话、跨工具、跨 Agent 仍然续得上</li>
-        <li>每一步都可观测、可回滚、可审计</li>
-      </ul>
+    <div style="padding:1.4em;background:linear-gradient(160deg, rgba(255,92,174,0.12), rgba(255,184,77,0.06));border-radius:10px;border-left:3px solid var(--danger)">
+      <h3 style="color:var(--danger);margin-top:0">🔍 逐行 review 端</h3>
+      <div class="metric" style="padding:0.4em 0">
+        <div class="num" style="font-size:2.6em">50–100</div>
+        <div class="label">行 / 小时（深度 review）</div>
+      </div>
+      <p style="font-size:0.92em">逐行看逻辑 / 边界 / 副作用 / 测试覆盖——这是有上限的，再高效也快不了 10 倍</p>
     </div>
   </div>
-  <div class="callout" style="margin-top:1.5em">
-    <strong>核心命题</strong>：AI 单次写代码<u>本来就快</u>——Vibe Coding 是让这份「快」<em>在多项目、长时间维度上仍然稳得住</em>。
+  <div class="callout" style="margin-top:1.4em;background:rgba(255,92,174,0.1);border-left:3px solid var(--accent-2);font-size:0.9em">
+    <span style="display:block"><strong>差距 ~30 倍。</strong>"AI 写完代码，review 一下" 这句话已经失效。</span>
+    <span style="display:block;margin-top:0.25em">需求进入多轮讨论、长会话和多 Agent 协作后，review 带宽会被反复分摊，业务判断更容易漂移。</span>
   </div>
+  <div class="callout ok" style="margin-top:0.8em">
+    <strong>真正要解决的目标不是"看完代码"，而是"保证业务正确性"。</strong>业务正确性 = 符合业务规则、遵守系统契约、不破坏不变量、没有漏掉必做项。
+  </div>
+  <p class="footnote" style="margin-top:0.8em">我的实践样本：使用一段时间以来，在 6 段真实开发实践中使用 Cursor / Claude / Codex，并把过程中反复用到的方法沉淀成 agent-skills 和 worktrail。</p>
 </section>
 
-<!-- 5. The shift -->
+<!-- 4. Two-layer admission + 3 outlets -->
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">02</span>
     <span class="kicker">The Shift</span>
   </div>
-  <h2>从 <code>Chat</code> 到 <code>Workflow</code> 的转变</h2>
+  <h2>一个症状 · <span class="gradient-cool">一个目标 · 三段控制 + 判断外置</span></h2>
   <div class="glow-line"></div>
-  <table>
-    <thead>
-      <tr><th>维度</th><th>Chat 模式（V1）</th><th>Workflow 模式（V2）</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>会话单位</td><td>一问一答</td><td>有目标、有 plan、有 verify 的任务</td></tr>
-      <tr><td>记忆</td><td>仅当前 context window</td><td>跨会话的知识库（Markdown + 索引）</td></tr>
-      <tr><td>纪律</td><td>靠 prompt 反复提醒</td><td>编码成 Skill，自动触发</td></tr>
-      <tr><td>错误处理</td><td>错了再试 / 撤回</td><td>Review Loop + 最小验证 + 可回滚 diff</td></tr>
-      <tr><td>多 Agent</td><td>一个 Chat 干所有事</td><td>声明式 delegate，Tier 1/2 协议</td></tr>
-      <tr><td>交接</td><td>「我把上下文复制给你」</td><td>Handoff candidate · State checkpoint</td></tr>
-      <tr><td>产物</td><td>代码片段</td><td>代码 + 测试 + 文档 + 决策记录</td></tr>
-    </tbody>
-  </table>
-  <p class="footnote" style="margin-top:1em">在 IDE 集成、MCP、Hooks、Skills 都已成熟的 2026，Workflow 模式已经从 Power-User 玩具变成<strong>团队协作的最小公约数</strong>。</p>
-</section>
-<!-- 6. Section: Methodology -->
-<section class="section-divider">
-  <div class="part">PART · 02</div>
-  <div class="title gradient">方法论 · 5 大支柱</div>
-  <div class="desc">从踩坑里长出来的、可被工具承载、能被团队复用的工程纪律。</div>
+  <div style="padding:1em 1.4em;background:linear-gradient(160deg, rgba(0,212,255,0.16), rgba(124,92,255,0.06));border-radius:10px;border-left:3px solid var(--accent-3);margin-bottom:0.8em">
+    <strong style="color:var(--accent-3);font-size:1.05em">承认 A · </strong>
+    <strong>在 coding 上，AI 擅长输入边界清楚、代码模式可复用、反馈能自动验证的任务</strong>——仿写既有结构、boilerplate、字段映射、接口适配、测试和 migration，通常更快也更稳。
+  </div>
+  <div style="padding:1em 1.4em;background:linear-gradient(160deg, rgba(255,92,174,0.16), rgba(255,184,77,0.06));border-radius:10px;border-left:3px solid var(--accent-2);margin-bottom:0.8em">
+    <strong style="color:var(--accent-2);font-size:1.05em">承认 B · </strong>
+    <strong>而且 AI 代码产出已经超过 review 带宽</strong>——一旦需求进入多轮讨论、多 Agent 协作和长会话，"写完代码再 review 一下"这件事在物理上做不到了。
+  </div>
+  <div style="padding:1em 1.4em;background:linear-gradient(160deg, rgba(124,92,255,0.14), rgba(0,212,255,0.05));border-radius:10px;border-left:3px solid var(--accent);margin-bottom:1em">
+    <strong style="color:var(--accent);font-size:1.05em">目标 · </strong>
+    <strong>在 AI 高速写代码时，仍然保证业务正确性</strong>——把业务意图注入流程，把业务判断留在会话之外，把正确性变成可执行检查。
+  </div>
+  <p style="font-size:1em;color:var(--fg-muted);margin-bottom:0.5em">所以真问题不再是"怎么让 AI 多写代码"，而是<strong>业务正确性如何进入 AI 工作流</strong>：</p>
+  <div class="grid grid-4" style="gap:0.8em">
+    <div class="card" style="border-top:3px solid var(--accent)">
+      <h4 style="color:var(--accent)">❶ 事前注入</h4>
+      <p style="font-size:0.88em">→ <strong>事前声明</strong><br/>规则 / 契约 / 不变量 / 必做项</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent-2)">
+      <h4 style="color:var(--accent-2)">❷ 事中校正</h4>
+      <p style="font-size:0.88em">→ <strong>暴露假设</strong><br/>影响面 / 计划 / 缺口</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent-3)">
+      <h4 style="color:var(--accent-3)">❸ 事后证明</h4>
+      <p style="font-size:0.88em">→ <strong>Evidence-as-Authority</strong><br/>契约 / 不变量 / Golden / 链路 / 证据包</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent-4)">
+      <h4 style="color:var(--accent-4)">判断外置</h4>
+      <p style="font-size:0.88em">→ <strong>判断外置</strong><br/>规则与决策痕迹沉淀到工具</p>
+    </div>
+  </div>
 </section>
 
-<!-- 7. 5 Pillars overview -->
+<!-- =========================================================
+     SECTION 1 · Q1 · 角色 (2 pages)
+     ========================================================= -->
+
+<!-- 5. Q1 · Role -->
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">03</span>
-    <span class="kicker">Five Pillars</span>
+    <span class="kicker">Q1 · 角色</span>
   </div>
-  <h2>支撑 Vibe Coding 的 <span class="gradient">5 根柱子</span></h2>
+  <h2>问题 ❶ · 业务意图怎么注入？<span class="gradient-cool">→ 事前声明</span></h2>
   <div class="glow-line"></div>
-  <div class="grid grid-5" style="gap:0.8em">
-    <div class="card" style="padding:1em">
-      <div class="icon" style="color:var(--accent)">⌘</div>
-      <h4 style="color:var(--accent)">Context First</h4>
-      <p style="font-size:0.78em">先加载，再开工。Context Pack 不是辅助，是必需品。</p>
+  <div class="callout" style="background:rgba(255,92,174,0.08);border-left:3px solid var(--accent-2)">
+    <strong>核心转变：</strong>业务意图注入，不是“把需求说清楚”这么泛；而是把 <strong>AI 无法从代码里可靠推断的业务判断</strong>，提前变成任务输入。
+  </div>
+  <div class="grid grid-3" style="gap:0.75em;margin-top:0.9em">
+    <div class="card" style="border-top:3px solid var(--accent)">
+      <h4 style="color:var(--accent)">① 业务规则</h4>
+      <p style="font-size:0.82em">什么情况下成功 / 失败 / 跳过 / 报错。<br/><strong>例：</strong><code>origin_form</code> 缺字段就直接失败。</p>
     </div>
-    <div class="card" style="padding:1em">
-      <div class="icon" style="color:var(--accent-2)">⚙</div>
-      <h4 style="color:var(--accent-2)">Skill-Driven</h4>
-      <p style="font-size:0.78em">把"该怎么做"编码成模块化 Skill，自动触发。</p>
+    <div class="card" style="border-top:3px solid var(--accent-2)">
+      <h4 style="color:var(--accent-2)">② 系统契约</h4>
+      <p style="font-size:0.82em">接口行为、字段来源、兼容边界不能被改。<br/><strong>例：</strong>不回退 <code>policy.Premium</code>，旧 <code>toko</code> contract 不动。</p>
     </div>
-    <div class="card" style="padding:1em">
-      <div class="icon" style="color:var(--accent-3)">↻</div>
-      <h4 style="color:var(--accent-3)">Review Loop</h4>
-      <p style="font-size:0.78em">需求 / 设计 / 计划 / 代码 / 测试，分型审查至 clean。</p>
+    <div class="card" style="border-top:3px solid var(--accent-3)">
+      <h4 style="color:var(--accent-3)">③ 不变量</h4>
+      <p style="font-size:0.82em">无论怎么实现都必须成立的约束。<br/><strong>例：</strong><code>toko</code> / <code>toko-pro</code> 不能串源，<code>其它不变</code>。</p>
     </div>
-    <div class="card" style="padding:1em">
-      <div class="icon" style="color:var(--accent-4)">⊞</div>
-      <h4 style="color:var(--accent-4)">Multi-Agent</h4>
-      <p style="font-size:0.78em">受控并行 + 证据汇总。声明 delegate，禁止野生分裂。</p>
+    <div class="card" style="border-top:3px solid var(--accent-4)">
+      <h4 style="color:var(--accent-4)">④ 必做 / 禁止项</h4>
+      <p style="font-size:0.82em">哪些行为必须保留，哪些“优化”不能出现。<br/><strong>例：</strong>配置中的邮件都要发送；不能增加猜测式 fallback。</p>
     </div>
-    <div class="card" style="padding:1em">
-      <div class="icon" style="color:var(--warn)">⤳</div>
-      <h4 style="color:var(--warn)">Handoff & State</h4>
-      <p style="font-size:0.78em">长会话的命脉：checkpoint · handoff · candidate。</p>
+    <div class="card" style="border-top:3px solid var(--warn)">
+      <h4 style="color:var(--warn)">⑤ 验收标准</h4>
+      <p style="font-size:0.82em">什么证据算完成，而不是“代码写了”。<br/><strong>例：</strong>哪些测试、golden case、真实链路和证据包必须通过。</p>
     </div>
   </div>
-  <div class="callout ok" style="margin-top:1.5em">
-    每个支柱我都为它写了一个 <strong>Skill</strong> 或 <strong>CLI 命令</strong>——这是后面要讲的两个工具的来历。
+  <div class="callout ok" style="margin-top:0.9em">
+    <strong>规律：</strong>AI 能学到代码结构，但业务判断必须在任务输入中显式声明。载体可以是 Task brief / Plan / AGENTS.md / worktrail context / Skill / Validator，原则是：<u>动手前能看到，动手后会被检查</u>。
   </div>
 </section>
 
-<!-- 8. Pillar 1: Context First -->
+<!-- 6. In-flight Control -->
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">04</span>
-    <span class="kicker">Pillar · 01</span>
+    <span class="kicker">事中 · 控制面</span>
   </div>
-  <h2>① <span class="gradient-cool">Context First</span> — 别让 AI 重新认识项目</h2>
+  <h2>事中怎么控？<span class="gradient-cool">让 AI 持续暴露业务假设</span></h2>
   <div class="glow-line"></div>
-  <div class="two-col">
+  <div class="callout" style="background:rgba(0,212,255,0.08);border-left:3px solid var(--accent-3);margin-bottom:0.8em">
+    <strong>关键转变：</strong>事中不是盯着 AI 写代码，而是控制它的工作节奏：先暴露假设和影响面，再给计划，分阶段执行，每阶段用 review-loop 自检。
+  </div>
+  <div class="two-col" style="gap:2em;margin-top:0.4em">
     <div>
-      <h3>痛点</h3>
-      <ul>
-        <li>每个新会话都从「我们用 Go + Echo + GORM …」开始</li>
-        <li>AI 改了一处，破坏了你两周前定的约定</li>
-        <li>项目记忆只存在你脑子里 / Slack 里 / 上一个 PR description 里</li>
+      <h3 style="color:var(--accent)">5 个事中控制动作</h3>
+      <ul style="font-size:0.88em">
+        <li><strong>列假设</strong>：字段来源、失败语义、fallback、兼容策略，哪些是 AI 猜的？</li>
+        <li><strong>查影响面</strong>：会不会动到旧接口、无关产品、报表、邮件、回调、下游通知？</li>
+        <li><strong>先给 plan</strong>：改哪些文件、为什么改、业务规则怎么落地、测试怎么证明。</li>
+        <li><strong>小步执行</strong>：一阶段只解决一个业务动作，阶段结束汇报保留了哪些不变量。</li>
+        <li><strong>暴露缺口</strong>：还没验证什么、哪些场景没覆盖、哪些风险需要进入 review gate。</li>
       </ul>
-      <h3 style="margin-top:1em">解法</h3>
-      <ul>
-        <li>把项目记忆<strong>结构化</strong>沉淀：架构 / 决策 / 约定 / 验收标准</li>
-        <li>会话开始第一件事：<code>worktrail context "current task"</code></li>
-        <li>每个 Agent 平台（Cursor / Claude / Codex）都自动 inject 同一个 Context Pack</li>
-      </ul>
+      <p style="font-size:0.86em;color:var(--fg-muted);margin-top:0.5em">这一步的目标不是让 AI 慢下来，而是让它不要带着隐藏业务假设一路写到底。</p>
     </div>
     <div>
-      <pre><code class="language-bash"># 任务开始
-$ worktrail context "fix payment timeout bug"
-
-# Context Pack v1 ──────────────────────
-## Active State
-- Branch: hotfix/payment-timeout
-- Last checkpoint: 2026-05-24 18:32
-
-## Constraints
-- 不能改 Partner API 契约（来自 ADR-017）
-- 重试必须幂等（来自 rules/idempotency.md）
-
-## Maintenance hints
-Pending evidence candidates: 3.
-Next: /worktrail-distill
-
-## Next steps
-1. 复现：scripts/repro-timeout.sh
-2. 检查 retry policy 单测
-─────────────────────────────────────</code></pre>
+      <h3 style="color:var(--accent-3)">工具 · 5 种 review-loop</h3>
+      <table style="font-size:0.84em">
+        <thead><tr><th>Loop</th><th>事中要暴露的问题</th></tr></thead>
+        <tbody>
+          <tr><td><code>requirements</code></td><td>需求是否有二义性 / 缺失场景？</td></tr>
+          <tr><td><code>design</code></td><td>方案是否破坏契约 / 不变量？</td></tr>
+          <tr><td><code>plan</code></td><td>步骤、文件、验证是否可执行？</td></tr>
+          <tr><td><code>code</code></td><td>实现是否偏离业务意图？</td></tr>
+          <tr><td><code>test</code></td><td>正例、负例、链路、回归是否覆盖？</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.86em;color:var(--fg-muted);margin-top:0.5em">review-loop 是事中控制工具：让 AI 自己找问题、分类、修复，把隐藏假设摊开进入 review gate。</p>
     </div>
   </div>
 </section>
 
-<!-- 9. Pillar 2: Skill-Driven -->
+<!-- =========================================================
+     SECTION 2 · Q2 · 判断外置 (3 pages)
+     ========================================================= -->
+
+<!-- 7. Q2 · Rhythm -->
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">05</span>
-    <span class="kicker">Pillar · 02</span>
+    <span class="kicker">Q2 · 判断外置</span>
   </div>
-  <h2>② <span class="gradient-cool">Skill-Driven Discipline</span> — 把"该怎么做"编码进 Skill</h2>
+  <h2>问题 ❷ · 业务判断怎么不漂移？<span class="gradient-cool">→ 判断外置</span></h2>
   <div class="glow-line"></div>
-  <p>Skill = <em>一个可被自动触发、有明确边界、能产出可观测痕迹的行为模块</em>。</p>
-  <div class="grid grid-3" style="margin-top:0.8em">
-    <div class="card">
-      <h4>触发是显式的</h4>
-      <p style="font-size:0.85em">每个 Skill 描述什么时候 use / NOT use，告别「prompt 里念叨」。</p>
-    </div>
-    <div class="card">
-      <h4>边界是收敛的</h4>
-      <p style="font-size:0.85em">小任务不强行升级到重型 Skill，AGENTS.md 治理路由。</p>
-    </div>
-    <div class="card">
-      <h4>痕迹是可审计的</h4>
-      <p style="font-size:0.85em">Skill 执行输出 <code>[task-validation]</code> / <code>[output]</code> / <code>[validate]</code> 等结构化块。</p>
-    </div>
+  <div class="callout" style="background:rgba(255,184,77,0.08);border-left:3px solid var(--accent-2)">
+    <strong>间接但关键：</strong>记忆管理本身不是业务正确性；但多轮对话、长会话、跨 Agent 协作时一旦丢掉业务判断，AI 就会写出业务不正确的代码。真正要保住的是<strong>为什么这样做、哪些不能改、哪些 fallback 被禁止、哪些风险没验证</strong>。
   </div>
-  <div class="callout warn" style="margin-top:1em">
-    <strong>反直觉的设计选择</strong>：Skill 是<em>有意降速</em>的——用「看起来慢」换<em>「误改率与回滚成本更低」</em>。<br/>这不是 productivity tool，是 <strong>quality gate</strong>。
+  <div class="grid grid-2" style="gap:1em;margin-top:1em">
+    <div class="card" style="border-left:3px solid var(--accent-1)">
+      <span class="icon">🔀</span>
+      <h4>长会话会稀释判断</h4>
+      <p style="font-size:0.92em">同一需求聊到第 20 轮，AI 仍记得文件结构，但很可能忘了<strong>为什么不能 fallback、为什么旧契约不能动</strong>。</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--accent-2)">
+      <span class="icon">📌</span>
+      <h4>不漂移前提 · 判断外置</h4>
+      <p style="font-size:0.92em">任何新会话 / 新 Agent 接手时，都能 <strong>3 分钟接住业务判断</strong>——靠 worktrail context / handoff，而不是翻聊天记录。</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--accent-3)">
+      <span class="icon">📊</span>
+      <h4>外置的对象</h4>
+      <p style="font-size:0.92em">不是保存所有上下文，而是保存<strong>业务规则、决策理由、禁止项、未验证风险、下一步验证</strong>。</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--accent-4)">
+      <span class="icon">⚡</span>
+      <h4>外置的收益</h4>
+      <p style="font-size:0.92em">AI 可以换会话、换工具、换 Agent；只要业务判断不丢，协作就不会退回“从头解释一遍”。</p>
+    </div>
   </div>
 </section>
 
-<!-- 10. Pillar 3: Review Loop -->
+<!-- 8. Q2 · Tool + Practice (worktrail) -->
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">06</span>
-    <span class="kicker">Pillar · 03</span>
+    <span class="kicker">Q2 · 工具 + 实践</span>
   </div>
-  <h2>③ <span class="gradient-cool">Review Loop · 五分型</span></h2>
+  <h2>worktrail · <span class="gradient-cool">把业务判断留在会话之外</span></h2>
   <div class="glow-line"></div>
-  <p>不同产物，不同审查标准。一个万能 review prompt 解决不了所有问题。</p>
-  <div class="grid grid-5" style="margin-top:1em">
-    <div class="card" style="padding:1em">
-      <span class="pill">/需求</span>
-      <h4>requirements-<br/>review-loop</h4>
-      <p style="font-size:0.78em">PRD · 用户故事 · 验收标准</p>
+  <div class="two-col" style="gap:2em;margin-top:0.4em">
+    <div>
+      <h3 style="color:var(--accent-2)">4 个原语</h3>
+      <ul style="font-size:0.92em">
+        <li><strong>Context Pack</strong> · 任务开始第一步：<code>worktrail context "task"</code> → 自动注入当前业务判断 / 约束 / 下一步</li>
+        <li><strong>State Capsule</strong> · 长任务 checkpoint，保留阶段性业务判断和未验证风险</li>
+        <li><strong>Handoff Candidate</strong> · 结束或交接前留一份"为什么这么走、接下来怎么走"的草稿</li>
+        <li><strong>Knowledge Lifecycle</strong> · import → distill → review → promote</li>
+      </ul>
+      <h3 style="color:var(--accent-2);margin-top:1em">硬约束 · 机制可追溯</h3>
+      <ul style="font-size:0.88em">
+        <li>无 daemon · 无向量库 · 无内嵌 LLM</li>
+        <li>所有真相在 Markdown + JSON 文件里 · git 友好</li>
+        <li>SQLite 只做索引 · 删了 index 重建即可</li>
+      </ul>
     </div>
-    <div class="card" style="padding:1em">
-      <span class="pill">/设计</span>
-      <h4>design-<br/>review-loop</h4>
-      <p style="font-size:0.78em">RFC · ADR · 架构 · 接口</p>
+    <div>
+      <h3 style="color:var(--accent-3)">实践 · 一次任务的 5 步</h3>
+      <pre style="font-size:0.78em;line-height:1.5"><code class="language-bash"># 1. 任务开始
+$ worktrail context "fix payment timeout"
+
+# Context Pack ─────────────
+## Business Judgments
+- 不能改 Partner API 契约（ADR-017）
+- 重试必须幂等（rules/idempotency.md）
+- 失败时必须保留原错误码映射
+
+## Open Risks
+- 未验证旧 partner callback 是否受影响
+- retry policy 只覆盖 happy path
+
+## Next steps
+1. 复现：scripts/repro-timeout.sh
+2. 补 callback 回归测试
+─────────────────────────
+
+# 2. 长任务中途
+$ worktrail state checkpoint --reason "isolated bug"
+
+# 3. 会话结束 / 交接前
+$ worktrail handoff "current diff intent"
+
+# 4. 下次继续 / 新 Agent 接手
+$ worktrail context  # 自动接上
+
+# 5. 把新发现沉淀
+$ worktrail review plan --format json</code></pre>
     </div>
-    <div class="card" style="padding:1em">
-      <span class="pill">/计划</span>
-      <h4>plan-<br/>review-loop</h4>
-      <p style="font-size:0.78em">实施计划 · 迁移方案 · 路线图</p>
-    </div>
-    <div class="card" style="padding:1em">
-      <span class="pill">/代码</span>
-      <h4>code-<br/>review-loop</h4>
-      <p style="font-size:0.78em">diff · commit · PR · 已实现代码</p>
-    </div>
-    <div class="card" style="padding:1em">
-      <span class="pill">/测试</span>
-      <h4>test-<br/>review-loop</h4>
-      <p style="font-size:0.78em">用例 · 策略 · 覆盖矩阵本身</p>
-    </div>
-  </div>
-  <div class="callout" style="margin-top:1.2em">
-    <strong>循环终止条件</strong>：<code>review_result: clean</code> 才算完。否则 <em>fix → re-review</em> 不允许跳出。<br/>
-    在 Cursor / Claude 里只需 <code>/code-review-loop</code> 一句话，剩下的交给 Skill。
   </div>
 </section>
 
-<!-- 11. Pillar 4: Multi-Agent -->
+<!-- 9. Business Judgment Trace -->
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">07</span>
-    <span class="kicker">Pillar · 04</span>
+    <span class="kicker">Judgment Trace</span>
   </div>
-  <h2>④ <span class="gradient-cool">Multi-Agent Parallelism</span> — 不是越多越快</h2>
+  <h2>业务判断外置链路 · <span class="gradient-cool">同一需求跨多轮不漂移</span></h2>
   <div class="glow-line"></div>
-  <div class="two-col">
-    <div>
-      <h3>什么时候真值得并行</h3>
-      <ul>
-        <li>3 个以上<strong>独立</strong>调研区域</li>
-        <li>不同模块、不同假设可以无共享写入地探索</li>
-        <li>读多写少，结果可由父 agent 综合</li>
-      </ul>
-      <h3 style="margin-top:1em">什么时候<em>不</em>该并行</h3>
-      <ul>
-        <li>一次直接搜索/读文件就够用</li>
-        <li>工作区域高度重叠</li>
-        <li>父 agent 无法清晰综合输出</li>
-      </ul>
-    </div>
-    <div>
-      <h3>分级协议</h3>
-      <div class="card">
-        <span class="pill ok">Tier 1</span> 只读探索<br/>
-        <p style="font-size:0.85em;margin-top:0.3em">无需声明，每个子 Agent 有清晰问题与证据格式即可。</p>
-      </div>
-      <div class="card" style="margin-top:0.6em">
-        <span class="pill warn">Tier 2</span> 写能力<br/>
-        <p style="font-size:0.85em;margin-top:0.3em">启动前必须输出：<br/><code>[delegate: 2-4 | split:&lt;dim&gt; | risk:&lt;low|med|high&gt;]</code></p>
-      </div>
-      <div class="callout ok" style="margin-top:0.6em">
-        最多 4 个 active subagent。冲突时按<strong>证据强度</strong>裁决，不按数量投票。
-      </div>
-    </div>
+  <div class="mermaid" data-src="flowchart LR
+    A[需求输入<br/>业务规则 / 契约 / 不变量]:::a
+    B[方案讨论<br/>记录决策理由]:::b
+    C[实现阶段<br/>暴露假设和影响面]:::c
+    D[会话结束<br/>handoff 写入风险和下一步]:::d
+    E[新会话 / 新 Agent<br/>context 重新注入判断]:::e
+    F[验证阶段<br/>5 道门禁证明正确]:::f
+
+    A --&gt; B --&gt; C --&gt; D --&gt; E --&gt; F
+    B -. 禁止 fallback .-&gt; E
+    C -. 未验证风险 .-&gt; F
+
+    classDef a fill:#1a1a2e,stroke:#7c5cff,color:#fff
+    classDef b fill:#1a1a2e,stroke:#00d4ff,color:#fff
+    classDef c fill:#1a1a2e,stroke:#ffb84d,color:#fff
+    classDef d fill:#1a1a2e,stroke:#ff5cae,color:#fff
+    classDef e fill:#1a1a2e,stroke:#00d4ff,color:#fff
+    classDef f fill:#1a1a2e,stroke:#7c5cff,color:#fff"
+    style="height:480px"></div>
+  <div class="callout ok" style="margin-top:0.8em">
+    <strong>业务判断外置不是保存聊天记录。</strong>它只抽取会影响业务正确性的东西：规则、契约、禁止项、决策理由、未验证风险和下一步验证。
   </div>
 </section>
 
-<!-- 12. Pillar 5: Handoff & State -->
+<!-- =========================================================
+     SECTION 3 · Q3 · 治错 (2 pages)
+     ========================================================= -->
+
+<!-- 10. Q3 · Error Treatment -->
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">08</span>
-    <span class="kicker">Pillar · 05</span>
+    <span class="kicker">Q3 · 治错</span>
   </div>
-  <h2>⑤ <span class="gradient-cool">Handoff & State</span> — 长会话的命脉</h2>
+  <h2>问题 ❸ · 事后怎么证明业务正确？<span class="gradient-cool">→ Evidence-as-Authority</span></h2>
   <div class="glow-line"></div>
-  <p>当一个任务跨越多次 compact、跨工具、甚至跨人时——<strong>记忆才是稀缺资源</strong>。</p>
-  <div class="pipeline" style="margin-top:1.5em">
-    <div class="step">
-      <div class="step-num">EVENT</div>
-      <div class="step-title">sessionStart</div>
-      <p>Cursor / Claude / Codex hook 触发，自动加载 Context Pack。</p>
+  <div class="callout" style="background:rgba(0,212,255,0.08);border-left:3px solid var(--accent-3)">
+    <strong>事后证明正确：</strong>不是把代码再 review 一遍，而是让候选实现通过业务门禁：<strong>契约能对上、不变量没破、关键案例能回归、真实链路跑得通、证据能留下</strong>。
+  </div>
+  <p style="font-size:1em;margin-top:0.8em">AI 不会自动理解业务语义——它会用最像代码库的方式先猜。<strong>把 AI 输出永远当 Proposal</strong>。下面 3 个片段都不是语法错，而是业务语义需要被门禁固定下来：</p>
+  <div class="grid grid-3" style="gap:0.8em;margin-top:1em">
+    <div class="card" style="border-top:3px solid var(--accent)">
+      <h4>① goto · 400103 错误码</h4>
+      <p style="font-size:0.83em;color:var(--fg-muted)"><strong>澄清：</strong>「希望 tiktok/claims 返回 400103，<u>其它不变</u>」<br/>
+      <strong>AI v1：</strong>提议全局改错误码生成<br/>
+      <strong>追问：</strong>「partnerMeta 持久化了吗？」<br/>
+      <strong>AI v2：</strong>收窄到 TokoPro 入口 + partnerMeta<br/>
+      <strong style="color:var(--accent-3)">→ 通过持久化和影响面追问，收窄实现范围</strong></p>
     </div>
-    <div class="step">
-      <div class="step-num">EVENT</div>
-      <div class="step-title">state update</div>
-      <p>长任务持续记录目标 / 决策 / 验证 / 下一步。</p>
+    <div class="card" style="border-top:3px solid var(--accent-2)">
+      <h4>② template-unify · 派生续保</h4>
+      <p style="font-size:0.83em;color:var(--fg-muted)"><strong>AI v1：</strong>用 application.form + 多种 JSON shape 兼容<br/>
+      <strong>澄清：</strong>「<u>去掉所有这样的兼容</u>，origin_form 缺字段就直接失败」<br/>
+      <strong>AI v2：</strong>改 typed meta struct，硬失败<br/>
+      <strong style="color:var(--accent-3)">→ 移除「聪明 fallback」，强制确定性契约</strong></p>
     </div>
-    <div class="step">
-      <div class="step-num">EVENT</div>
-      <div class="step-title">preCompact</div>
-      <p>压缩前自动 checkpoint，防止上下文丢失。</p>
-    </div>
-    <div class="step">
-      <div class="step-num">EVENT</div>
-      <div class="step-title">handoff</div>
-      <p>结束 / 切工具前，结构化交接：根因 · 改动 · 验证 · 未决问题。</p>
-    </div>
-    <div class="step">
-      <div class="step-num">EVENT</div>
-      <div class="step-title">candidate</div>
-      <p>知识沉淀为 pending candidate，等待 review · promote。</p>
+    <div class="card" style="border-top:3px solid var(--accent-3)">
+      <h4>③ consumer-finance · 报表保费</h4>
+      <p style="font-size:0.83em;color:var(--fg-muted)"><strong>AI v1：</strong>优先 meta.tms_premium，旧数据 fallback policy.Premium<br/>
+      <strong>澄清：</strong>「<u>不回退 policy.Premium</u>」<br/>
+      <strong>AI v2：</strong>严格依赖 tms_premium，发现 config 生成器漏映射<br/>
+      <strong style="color:var(--accent-3)">→ 明确业务语义 + 暴露隐藏 bug</strong></p>
     </div>
   </div>
-  <div class="callout" style="margin-top:1.5em">
-    <strong>Worktrail Hook 哲学</strong>：Hook <em>只能</em>记录证据，<em>永远不能</em>直接修改正式知识。<br/>
-    这是 AI 时代的<strong>「写权限分离」</strong>——agent 提案，人类裁决。
+  <div class="callout ok" style="margin-top:1em">
+    <strong>共同模式：</strong>AI 第一版 = 技术上 reasonable + 业务上暗藏假设。要保证业务正确性，澄清必须进一步沉淀成 validator / golden case / 不变量检查，而不是停留在一次对话里。
   </div>
-</section>
-<!-- 13. Section: Tools -->
-<section class="section-divider">
-  <div class="part">PART · 03</div>
-  <div class="title gradient">两个工具 · 一组左右脑</div>
-  <div class="desc">把上面 5 个支柱<strong>变成</strong>实际可用的、跨工具的、给团队的工程基础设施。</div>
 </section>
 
-<!-- 14. Left + Right brain -->
+<!-- 11. Q3 · Tool + Practice -->
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">09</span>
-    <span class="kicker">Tooling Architecture</span>
+    <span class="kicker">Q3 · 工具 + 实践</span>
   </div>
-  <h2><span class="gradient">Skills 管纪律 · Worktrail 管记忆</span></h2>
+  <h2>业务正确性的 5 道门禁 · <span class="gradient-cool">外加失败沉淀</span></h2>
   <div class="glow-line"></div>
-  <div class="grid grid-2" style="gap:1.5em">
-    <div class="tool-card">
-      <span class="badge">LEFT BRAIN</span>
-      <div class="name gradient-cool">agent-skills</div>
-      <div class="tagline">/Users/nickdu/workspaces/nickdu/agent-skills</div>
-      <p style="font-size:0.95em">面向真实仓库的 <em>Agent 执行纪律与编排模式库</em>。<strong>Markdown 主体 + Python 维护工具</strong>。</p>
-      <ul style="font-size:0.85em">
-        <li>14 个可组合 Skills（执行 / Review / 编排）</li>
-        <li>Skill Protocol：可观测的执行痕迹</li>
-        <li>3 平台镜像同步（<code>--sync-local cursor|claude</code>）</li>
-        <li>Maintainer 工程：trigger 测试 · token 基线 · 跨模型对比</li>
-      </ul>
+  <p style="font-size:0.96em;color:var(--fg-muted);margin-top:0.2em">AI 交付的是 <strong>候选实现</strong>。候选能不能进入主干，不靠“已经 review 过”，靠下面 5 类证据是否足够。</p>
+  <div class="grid grid-3" style="gap:0.75em;margin-top:0.9em">
+    <div class="card" style="border-top:3px solid var(--accent)">
+      <h4 style="color:var(--accent)">① 契约门禁</h4>
+      <p style="font-size:0.82em">API 入参/出参、必填字段、字段来源、旧接口兼容边界、不允许的 fallback。<br/><strong>例：</strong><code>meta.tms_premium</code> 缺失时不能回退 <code>policy.Premium</code>。</p>
     </div>
-    <div class="tool-card">
-      <span class="badge" style="background:var(--accent-3)">RIGHT BRAIN</span>
-      <div class="name gradient-cool">worktrail</div>
-      <div class="tagline">/Users/nickdu/workspaces/nickdu/worktrail</div>
-      <p style="font-size:0.95em">Local-first AI 编码会话<em>知识与状态层</em>。<strong>Go CLI · 无 daemon · 无向量库 · 无内嵌 LLM</strong>。</p>
-      <ul style="font-size:0.85em">
-        <li>Context Pack · State Capsule · Handoff · Candidate</li>
-        <li>知识生命周期：import → distill → review → promote</li>
-        <li>跨 Cursor / Claude / Codex 钩子与 MCP 集成</li>
-        <li>Markdown + JSON frontmatter 是真相源；SQLite 仅做索引</li>
-      </ul>
+    <div class="card" style="border-top:3px solid var(--accent-2)">
+      <h4 style="color:var(--accent-2)">② 不变量门禁</h4>
+      <p style="font-size:0.82em">绝对不能错的业务约束写成脚本/测试。<br/><strong>例：</strong><code>toko</code> / <code>toko-pro</code> 不能串源，HMAC 必填，加密字段不能明文落库。</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent-3)">
+      <h4 style="color:var(--accent-3)">③ Golden Case 回归</h4>
+      <p style="font-size:0.82em">固定输入 + 期望输出，验证业务语义不漂移。<br/><strong>例：</strong>prompt / parser / mapping 改动后，COI 字段抽取和 PromptSpeed 报表都要跑 golden。</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent-4)">
+      <h4 style="color:var(--accent-4)">④ 真实链路集成测试</h4>
+      <p style="font-size:0.82em">不要只测函数，要测业务闭环。<br/><strong>例：</strong>API request → DB → webhook/callback → 邮件/日报；AI 输出 → validator → 最终渲染。</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--warn)">
+      <h4 style="color:var(--warn)">⑤ 交付证据包</h4>
+      <p style="font-size:0.82em">AI 完成后必须交代：改了哪些业务规则、保持了哪些不变量、跑过哪些门禁、还有哪些风险没覆盖。</p>
     </div>
   </div>
-  <p class="footnote" style="text-align:center;margin-top:1.5em">两个工具都 <strong>open-source-ready</strong>，互不依赖，独立可用，组合更强。</p>
+  <div class="callout ok" style="margin-top:1em">
+    <strong>关键转变：</strong>review gate 从“逐行看代码”变成“判断证据是否足够”。每次 AI 猜错业务，不只修代码；要把错误沉淀成 validator、golden case、集成测试或 AGENTS/Skill 规则。
+  </div>
 </section>
 
-<!-- 15. agent-skills overview -->
+<!-- =========================================================
+     SECTION 4 · 闭环 (1 page)
+     ========================================================= -->
+
+<!-- 12. The Loop -->
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">10</span>
-    <span class="kicker">Tool · agent-skills</span>
+    <span class="kicker">The Loop</span>
   </div>
-  <h2>agent-skills · <span class="gradient-cool">14 个 Skill 一览</span></h2>
+  <h2>一个症状 · <span class="gradient-cool">一个目标 · 三段控制 + 判断外置</span></h2>
   <div class="glow-line"></div>
-  <h4 style="color:var(--accent-2)">EXECUTION · 执行类</h4>
-  <div class="skills-matrix" style="margin-top:0.4em">
-    <div class="skill-chip cat-exec"><span class="skill-name">scoped-tasking</span><span class="skill-desc">把宽泛任务压到最小有用边界</span></div>
-    <div class="skill-chip cat-exec"><span class="skill-name">bugfix-workflow</span><span class="skill-desc">证据优先的诊断→修复→验证</span></div>
-    <div class="skill-chip cat-exec"><span class="skill-name">safe-refactor</span><span class="skill-desc">行为不变的小范围结构整理</span></div>
-    <div class="skill-chip cat-exec"><span class="skill-name">impact-analysis</span><span class="skill-desc">评估共享接口的爆炸半径</span></div>
-    <div class="skill-chip cat-exec"><span class="skill-name">design-before-plan</span><span class="skill-desc">方案不清时先做设计澄清</span></div>
-    <div class="skill-chip cat-exec"><span class="skill-name">self-review</span><span class="skill-desc">测试前自查 diff 质量与范围越界</span></div>
-    <div class="skill-chip cat-exec"><span class="skill-name">targeted-validation</span><span class="skill-desc">最窄但有意义的验证</span></div>
-  </div>
-  <h4 style="color:var(--accent-3);margin-top:1em">REVIEW LOOP · 五分型互斥</h4>
-  <div class="skills-matrix" style="grid-template-columns:repeat(5,1fr);margin-top:0.4em">
-    <div class="skill-chip cat-review"><span class="skill-name">requirements-review-loop</span><span class="skill-desc">PRD · 用户故事 · 验收</span></div>
-    <div class="skill-chip cat-review"><span class="skill-name">design-review-loop</span><span class="skill-desc">RFC · ADR · 架构</span></div>
-    <div class="skill-chip cat-review"><span class="skill-name">plan-review-loop</span><span class="skill-desc">实施计划 · 迁移方案</span></div>
-    <div class="skill-chip cat-review"><span class="skill-name">code-review-loop</span><span class="skill-desc">diff · commit · PR</span></div>
-    <div class="skill-chip cat-review"><span class="skill-name">test-review-loop</span><span class="skill-desc">用例 · 策略 · 覆盖矩阵</span></div>
-  </div>
-  <h4 style="color:var(--accent-4);margin-top:1em">ORCHESTRATION · 编排与治理</h4>
-  <div class="skills-matrix" style="grid-template-columns:repeat(2,1fr);margin-top:0.4em">
-    <div class="skill-chip cat-orch"><span class="skill-name">multi-agent-protocol</span><span class="skill-desc">受控并行 subagent 启动与汇总</span></div>
-    <div class="skill-chip cat-orch"><span class="skill-name">manage-agents-md</span><span class="skill-desc">初始化/更新项目级治理文档</span></div>
+  <div class="mermaid" data-src="flowchart TD
+    ROOT[&quot;⚠️ 症状 · AI 代码产出 ≫ review 带宽&quot;]:::root
+    GOAL[&quot;🎯 目标 · AI 高速写代码时仍保证业务正确性&quot;]:::goal
+    Q1[❶ 事前<br/>注入业务意图]:::q1
+    Q2[❷ 事中<br/>暴露并校正假设]:::q2
+    Q3[❸ 事后<br/>用证据证明正确]:::q3
+    MEM[业务判断外置<br/>从聊天记录中抽取]:::mem
+    T1[Task Brief / AGENTS / Skill<br/>规则 · 契约 · 不变量 · 必做/禁止 · 验收]
+    T2[agent-skills<br/>review-loop · plan · impact]
+    T3[5 道门禁<br/>契约 · 不变量 · Golden · 链路 · 证据包]
+    T4[worktrail<br/>Context · State · Handoff]
+    P[控制面上移<br/>注入意图 · 控制过程 · 设计门禁]
+
+    ROOT --&gt; GOAL
+    GOAL --&gt; Q1
+    GOAL --&gt; Q2
+    GOAL --&gt; Q3
+    GOAL --&gt; MEM
+
+    Q1 --&gt; T1
+    Q2 --&gt; T2
+    Q3 --&gt; T3
+    MEM --&gt; T4
+
+    T1 --&gt; P
+    T2 --&gt; P
+    T3 --&gt; P
+    T4 --&gt; P
+
+    P -. 声明规则 / 契约 .-&gt; Q1
+    P -. 追问假设 / 影响面 .-&gt; Q2
+    P -. 设计可执行证据 .-&gt; Q3
+    P -. 记录判断 / 风险 / 决策理由 .-&gt; MEM
+
+    classDef root fill:#3a1f3a,stroke:#ff5cae,stroke-width:2px,color:#fff
+    classDef goal fill:#12303a,stroke:#00d4ff,stroke-width:2px,color:#fff
+    classDef q1 fill:#1a1a2e,stroke:#7c5cff,color:#fff
+    classDef q2 fill:#1a1a2e,stroke:#ffb84d,color:#fff
+    classDef q3 fill:#1a1a2e,stroke:#00d4ff,color:#fff
+    classDef mem fill:#1a1a2e,stroke:#5cffb1,color:#fff"
+    style="height:540px"></div>
+  <div class="callout ok" style="margin-top:0.6em">
+    <strong>三段控制 + 业务判断外置：</strong>事前注入业务意图，事中暴露并校正假设，事后用 5 道门禁证明正确；业务判断从聊天记录中抽取出来，贯穿三段，避免判断漂移。<u>这套机制共同替代旧的"写完代码再 review 一下"。</u>
   </div>
 </section>
 
-<!-- 16. agent-skills design philosophy -->
+<!-- =========================================================
+     SECTION 5 · 印证 (3 pages)
+     ========================================================= -->
+
+<!-- 13. Case A · coi-forge -->
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">11</span>
-    <span class="kicker">Tool · agent-skills</span>
+    <span class="kicker">印证 A · 正确性门禁</span>
   </div>
-  <h2>设计哲学 · <span class="gradient-cool">有意牺牲「看起来快」</span></h2>
-  <div class="glow-line"></div>
-  <div class="grid grid-2">
-    <div class="card">
-      <h4>哲学 1 · 小任务不上重型 Skill</h4>
-      <p>对小 patch 强行引入阶段技能 = 引入新的失败面。<br/><code>AGENTS.md</code> 路由层<strong>主动反对过度工程</strong>。</p>
-    </div>
-    <div class="card">
-      <h4>哲学 2 · Skill vs Governance 双层</h4>
-      <p>Skill = 单行为模块（怎么做）；<br/>Governance（<code>AGENTS.md</code>）= 路由 / 升级 / 交接（什么时候做）。</p>
-    </div>
-    <div class="card">
-      <h4>哲学 3 · Plan 不是独立 Skill</h4>
-      <p>Plan 由 <code>AGENTS.md §4</code> 统一规范——<br/>避免 Skill 数量膨胀，保持「最多 4 个活跃」。</p>
-    </div>
-    <div class="card">
-      <h4>哲学 4 · Maintainer 即工程产品</h4>
-      <p>Skill 触发率、token 效率、跨模型一致性都有<br/>baseline + regression 测试。<strong>把 prompt 当代码</strong>。</p>
-    </div>
-  </div>
-  <blockquote style="margin-top:1em">
-    Behavioral Guidelines · §2 Simplicity First · §3 Surgical Changes：<br/>
-    <em>「我们用『看起来慢』，换<strong>误改率与回滚成本更低</strong>。」</em>
-  </blockquote>
-</section>
-
-<!-- 17. worktrail lifecycle -->
-<section class="slide-content">
-  <div class="slide-header">
-    <span class="num">12</span>
-    <span class="kicker">Tool · worktrail</span>
-  </div>
-  <h2>worktrail · <span class="gradient-cool">知识生命周期</span></h2>
-  <div class="glow-line"></div>
-  <div style="display:flex;justify-content:center;margin:1em 0">
-    <div class="mermaid" data-src="flowchart LR
-      A[transcript / chat] -->|import| B[evidence candidate]
-      B -->|distill --pending| C[semantic candidate]
-      C -->|review plan| D{decision}
-      D -->|promote| E[(formal knowledge<br/>architecture / rules / decisions)]
-      D -->|merge| E
-      D -->|discard| F[(graveyard)]
-      E -->|context| G[next session]
-      G -->|state / handoff| A
-      style E fill:#1a1a2e,stroke:#7c5cff,color:#e6e6f0
-      style D fill:#11111e,stroke:#ff5cae,color:#ff5cae
-      style F fill:#11111e,stroke:#a0a0b8,color:#a0a0b8"></div>
-  </div>
-  <div class="grid grid-3" style="margin-top:1em">
-    <div class="card" style="padding:0.9em">
-      <h4>三角分工</h4>
-      <p style="font-size:0.85em"><strong>Worktrail</strong>：确定性治理<br/><strong>Agent</strong>：语义起草<br/><strong>User</strong>：确认门闸</p>
-    </div>
-    <div class="card" style="padding:0.9em">
-      <h4>双轨数据</h4>
-      <p style="font-size:0.85em"><code>raw/</code> 原始证据永不直接变正式知识；<br/>必经 <em>distill → review → promote</em>。</p>
-    </div>
-    <div class="card" style="padding:0.9em">
-      <h4>稳定 Contract</h4>
-      <p style="font-size:0.85em"><code>worktrail.context_pack.v1</code><br/><code>worktrail.review.plan.v1</code><br/><code>worktrail.distill.proposal.v1</code></p>
-    </div>
-  </div>
-</section>
-
-<!-- 18. worktrail anti-features -->
-<section class="slide-content">
-  <div class="slide-header">
-    <span class="num">13</span>
-    <span class="kicker">Tool · worktrail</span>
-  </div>
-  <h2>反功能清单 · <span class="gradient-cool">明确不做的事</span></h2>
-  <div class="glow-line"></div>
-  <p>Worktrail 的 README 第一节列出了 7 条<em>「不做」</em>。这是它的架构。</p>
-  <div class="grid grid-2" style="margin-top:1em;gap:0.6em">
-    <div class="card" style="padding:0.8em 1em"><span class="pill warn">✕ NO</span> <strong>daemon / 后台进程</strong> — 一次性 CLI 调用</div>
-    <div class="card" style="padding:0.8em 1em"><span class="pill warn">✕ NO</span> <strong>向量库 / embedding</strong> — 全文索引就够</div>
-    <div class="card" style="padding:0.8em 1em"><span class="pill warn">✕ NO</span> <strong>内嵌 LLM</strong> — Agent 提案、CLI 验证</div>
-    <div class="card" style="padding:0.8em 1em"><span class="pill warn">✕ NO</span> <strong>HTTP MCP</strong> — 仅 stdio，零网络面</div>
-    <div class="card" style="padding:0.8em 1em"><span class="pill warn">✕ NO</span> <strong>TUI / Web UI</strong> — Markdown + 浏览器 preview</div>
-    <div class="card" style="padding:0.8em 1em"><span class="pill warn">✕ NO</span> <strong>云端账号</strong> — local-first，仓库即真相</div>
-    <div class="card" style="padding:0.8em 1em"><span class="pill warn">✕ NO</span> <strong>自动 promote</strong> — 写权限永远归人类</div>
-    <div class="card" style="padding:0.8em 1em"><span class="pill ok">✓ YES</span> <strong>纯 Markdown + JSON frontmatter</strong> — 用 git 就能 review</div>
-  </div>
-  <blockquote style="margin-top:1em">
-    <em>「工程师信任的是文件系统，不是又一个 SaaS。」</em>
-  </blockquote>
-</section>
-<!-- 19. Section: Practice -->
-<section class="section-divider">
-  <div class="part">PART · 04</div>
-  <div class="title gradient">6 个项目 · <br/>方法论的真实落地</div>
-  <div class="desc">3 个从零创建（personal MVP / 企业绿场 / Local-first 桌面端）· 3 个接手迭代（企业 Go 微服务）<br/><strong>覆盖 TypeScript / Go / Rust 三种语言、Web / 桌面 / Android 三种形态</strong>。</div>
-  <div style="margin-top:2em;padding:1em 1.5em;background:rgba(255,92,174,0.08);border-left:3px solid var(--accent-2);border-radius:6px;max-width:48em;margin-left:auto;margin-right:auto;text-align:left;font-size:0.9em">
-    <strong>⚠️ 时间口径 + 两个杠杆：</strong>下面所有「13 天 / 3 周 / 5 周」都是<strong>自然日跨度</strong>，<u>不是全职工时</u>。<br/>
-    真实节奏来自两个杠杆：<strong>① Agent 写代码比我快比我好</strong> + <strong>② Agent 干活时我已切到另一个项目</strong>。
-  </div>
-</section>
-
-<!-- 19b. Multi-thread Vibe Rhythm -->
-<section class="slide-content">
-  <div class="slide-header">
-    <span class="num">14</span>
-    <span class="kicker">Practice · Rhythm</span>
-  </div>
-  <h2>两个杠杆 · <span class="gradient-cool">「多线 Vibe」工作节奏</span></h2>
-  <div class="glow-line"></div>
-  <div class="grid grid-2" style="gap:1em;margin-top:0.6em">
-    <div class="card" style="border-left:3px solid var(--accent-1)">
-      <span class="icon">🤖</span>
-      <h4>杠杆 1 · Agent 是更快的 producer</h4>
-      <p style="font-size:0.9em">不是「AI 当助手、我写代码」——<strong>Agent 写具体代码大多数情况比我又快又好</strong>：仿写已有结构、补 boilerplate、写 table-driven 单测 / 集成测试 / migration。<br/>我做它做不好的：<strong>业务规则、跨模块边界、否决「聪明兼容」</strong>。</p>
-    </div>
-    <div class="card" style="border-left:3px solid var(--accent-2)">
-      <span class="icon">🔀</span>
-      <h4>杠杆 2 · Agent 干活 = 我切换信号</h4>
-      <p style="font-size:0.9em">Agent 在 A 项目跑 plan / 测试 / build 的几分钟到几十分钟，我立刻切到 B 项目——<strong>把 LLM 等待时间变成另一个项目的进度</strong>。<br/>同时 2–4 个项目，是 Vibe Coding 改变<strong>工作量级</strong>的真正方式。</p>
-    </div>
-    <div class="card">
-      <span class="icon">📌</span>
-      <h4>切换前提 · Handoff</h4>
-      <p style="font-size:0.9em">多线能并行，靠的是 worktrail context / handoff + skill 自动加载 = <strong>回到任何项目 3 分钟接住上下文</strong>。不是靠记忆。</p>
-    </div>
-    <div class="card">
-      <span class="icon">📊</span>
-      <h4>评估单位变了</h4>
-      <p style="font-size:0.9em">不再是「这个项目用了几天」，而是「<strong>同一周内能在几个项目同时推进</strong>」——<u>这是工作量级的杠杆，不是效率的杠杆</u>。</p>
-    </div>
-  </div>
-  <blockquote style="margin-top:1em;text-align:center;font-size:0.95em">
-    <em>「Agent <strong>写代码比我快比我好</strong>；我做<strong>边界裁决</strong>。<br/>它在干活时，我去另一个项目——这才是 Vibe Coding 改变的节奏。」</em>
-  </blockquote>
-</section>
-
-<!-- 20. Projects overview / metrics -->
-<section class="slide-content">
-  <div class="slide-header">
-    <span class="num">15</span>
-    <span class="kicker">Practice · Overview</span>
-  </div>
-  <h2>实战项目总览 <span style="color:var(--fg-muted);font-size:0.6em">（数据脱敏，全部已观测）</span></h2>
-  <div class="glow-line"></div>
-  <table>
-    <thead>
-      <tr>
-        <th>项目</th><th>角色</th><th>语言</th><th>我的具体工作</th><th>AI 协作方式</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="project-tag">coi-forge</span></td>
-        <td><span class="pill ok">从零创建</span><br/><span style="font-size:0.8em;color:var(--fg-muted)">个人 MVP</span></td>
-        <td>TypeScript</td>
-        <td>13 天自然日 · 业余打磨 ~51K 行全栈 + 339 篇知识 + MCP</td>
-        <td>worktrail · skills · prompt 版本化 · golden eval</td>
-      </tr>
-      <tr>
-        <td><span class="project-tag">delivery-experts</span></td>
-        <td><span class="pill ok">从零主导</span><br/><span style="font-size:0.8em;color:var(--fg-muted)">企业绿场</span></td>
-        <td>TypeScript</td>
-        <td>主导知识 OS 与 Wave 化交付 · 6-Agent 编排</td>
-        <td>worktrail 重度 · Codex 6-Agent · Cursor hooks</td>
-      </tr>
-      <tr>
-        <td><span class="project-tag">projex</span></td>
-        <td><span class="pill ok">从零创建</span><br/><span style="font-size:0.8em;color:var(--fg-muted)">Local-first 桌面 + Android</span></td>
-        <td>Rust + TS</td>
-        <td>3 周自然日 · 业余 ship 三端 · 1 万行首 commit · 250 集成测试</td>
-        <td>PRD + AGENTS.md 双文档驱动 · Mermaid 架构</td>
-      </tr>
-      <tr>
-        <td><span class="project-tag">goto</span></td>
-        <td><span class="pill warn">接手参与</span><br/><span style="font-size:0.8em;color:var(--fg-muted)">feature 主导</span></td>
-        <td>Go</td>
-        <td><strong>toko-pro 双轨 API</strong>：Phase 1–6 设计 + impl + webhook.site 集成测试</td>
-        <td>Design-first · 中文方案文档 · 多轮 Plan Review</td>
-      </tr>
-      <tr>
-        <td><span class="project-tag">template-unify</span></td>
-        <td><span class="pill warn">接手参与</span><br/><span style="font-size:0.8em;color:var(--fg-muted)">feature 主导</span></td>
-        <td>Go</td>
-        <td><strong>ph_finbro 续保衍生</strong>：Strategy + Action + 680 行单测 + 724 行集成测试</td>
-        <td><code>CLAUDE.md</code> 项目记忆 · 仿 Strategy 同形结构补全 · 否决 AI「聪明兼容」</td>
-      </tr>
-      <tr>
-        <td><span class="project-tag">consumer-finance</span></td>
-        <td><span class="pill warn">接手参与</span><br/><span style="font-size:0.8em;color:var(--fg-muted)">feature 主导</span></td>
-        <td>Go</td>
-        <td><strong>PromptSpeed 包裹险</strong>：743 行 plan + impl + Bugfix 马拉松（24 commits）</td>
-        <td>Claude 起步写 plan + Cursor 迭代精修 · 人机联调 staging</td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="grid grid-4" style="margin-top:1.5em;gap:0.8em">
-    <div class="metric"><div class="num">3 + 3</div><div class="label">从零 + 接手</div></div>
-    <div class="metric"><div class="num">22+</div><div class="label">Co-authored: Cursor commits</div></div>
-    <div class="metric"><div class="num">1500+</div><div class="label">行 PRD + AGENTS 文档</div></div>
-    <div class="metric"><div class="num">3</div><div class="label">Agent 平台并用</div></div>
-  </div>
-</section>
-
-<!-- 21. Case 1: COI Forge -->
-<section class="slide-content">
-  <div class="slide-header">
-    <span class="num">16</span>
-    <span class="kicker">Case · 01</span>
-  </div>
-  <h2>COI Forge · <span class="gradient-cool">「AI 建议，规则裁决」</span></h2>
+  <h2>coi-forge · <span class="gradient-cool">"把业务正确性做成门禁"</span></h2>
   <div class="glow-line"></div>
   <div class="case-grid">
     <div>
-      <h4>项目 · 保险凭证（COI）模板配置 + PDF 预览 MVP</h4>
+      <h4>实践 · 保险凭证（COI）模板配置 + PDF 预览 MVP（TypeScript 全栈）</h4>
       <p>Schema 驱动配置，三种渲染模式（HTML / PDF Overlay / PDF-only Discovery），AI Vision 提案 + 后端 Validator + Review Gate。</p>
-      <h4 style="margin-top:0.8em">方法论 · 5 个亮点</h4>
-      <ul>
-        <li><strong>架构先行</strong>：每个 wave 有 architecture doc + validation 记录</li>
-        <li><strong>Prompt 即代码</strong>：6 个 prompt 文件带版本号（如 <code>2026-05-17.1</code>），配测试</li>
-        <li><strong>Golden Eval 体系</strong>：<code>npm run eval:llm-discovery-golden</code> 等 15+ eval 脚本，AI 输出像 API 一样可回归</li>
-        <li><strong>Tool API + MCP 双暴露</strong>：同一业务能力服务人类 UI 和外部 Agent</li>
+      <h4 style="margin-top:0.8em;color:var(--accent-3)">印证 ❶ + ❸ · 意图注入 + 正确性证明</h4>
+      <ul style="font-size:0.88em">
+        <li><strong>Prompt 即代码</strong>：6 个 prompt 带版本号（如 <code>2026-05-17.1</code>），改 prompt = 跑 eval</li>
+        <li><strong>Golden Eval 体系</strong>：15+ eval 脚本，AI 输出像 API 一样可回归</li>
+        <li><strong>Tool API + MCP 双暴露</strong>：同一业务能力同时服务 UI 和外部 Agent</li>
         <li><strong>Semantic Guard</strong>：脚本防止 AI 走捷径硬编码保险别名回流仓库</li>
+        <li><strong>discarded_candidates</strong>：让淘汰项可见，而非静默丢弃——AI 输出永远可追溯</li>
       </ul>
     </div>
     <div style="display:flex;flex-direction:column;gap:1em;justify-content:center">
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">13 天</div>
-          <div class="label">自然日跨度<br/><span style="font-size:0.78em;opacity:0.7">业余 + agent 异步</span></div>
+          <div class="num">~51K</div>
+          <div class="label">行 TS 全栈代码</div>
         </div>
       </div>
       <div class="card">
@@ -695,83 +542,30 @@ Next: /worktrail-distill
         </div>
       </div>
       <blockquote style="font-size:0.85em">
-        <em>「AI 输出永远是 advisory，validator 才是权威。<code>discarded_candidates</code> 让淘汰项可见，而非静默丢弃。」</em>
+        <em>「AI 输出永远是 advisory，<br/>validator 才是权威。<br/><code>discarded_candidates</code> 让淘汰项可见，<br/>而非静默丢弃。」</em>
       </blockquote>
     </div>
   </div>
 </section>
 
-<!-- 22. Case 2: delivery-experts -->
+<!-- 14. Case B · goto -->
 <section class="slide-content">
   <div class="slide-header">
-    <span class="num">17</span>
-    <span class="kicker">Case · 02</span>
+    <span class="num">12</span>
+    <span class="kicker">印证 B · 契约先行</span>
   </div>
-  <h2>Delivery Experts · <span class="gradient-cool">「先建知识 OS，再写产品」</span></h2>
+  <h2>goto · <span class="gradient-cool">「先把业务契约写进方案，再让 AI 写代码」</span></h2>
   <div class="glow-line"></div>
   <div class="case-grid">
     <div>
-      <h4>项目 · 面向 Delivery Expert 的 AI 辅助交付工作台（绿场 AI-first）</h4>
-      <p>把业务材料转成可审查、可审计、Backend-gated 的 Configuration IR，<strong>不是「聊天改配置」</strong>。</p>
-      <h4 style="margin-top:0.8em">方法论 · 落地组合拳</h4>
-      <ul>
-        <li><strong>Worktrail 重度使用</strong>：308 篇 Markdown · 自动 sessionEnd checkpoint · acceptance gates 脚本化</li>
-        <li><strong>Codex 6-Agent 编排</strong>：<code>.codex/agents/*.toml</code> 定义 Lead / Runtime / Domain / Workbench / QA / Review 六角色</li>
-        <li><strong>Wave 化交付</strong>：P0 Workbench → Wave 5 人工审查 → Wave 6 执行网关 → Assistant MVP</li>
-        <li><strong>Review-first 安全边界</strong>：浏览器是审查面，执行权在后端 Controlled Delivery</li>
-        <li><strong>UI 原型与生产分离</strong>：<code>src/apps/prototype</code> 纯 mock，不污染生产 build</li>
-      </ul>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:1em;justify-content:center">
-      <div class="card">
-        <div class="metric" style="padding:0">
-          <div class="num">~69K</div>
-          <div class="label">TypeScript 行</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="metric" style="padding:0">
-          <div class="num">6</div>
-          <div class="label">Codex 持久角色</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="metric" style="padding:0">
-          <div class="num">accept:*</div>
-          <div class="label">脚本化验收门禁</div>
-        </div>
-      </div>
-      <blockquote style="font-size:0.85em">
-        <em>「AI 的价值 = 加速知识结构化 + 保持决策可追溯，<br/>而不是替代架构思考。」</em>
-      </blockquote>
-    </div>
-  </div>
-</section>
-
-<!-- 23. Case 3: goto -->
-<section class="slide-content">
-  <div class="slide-header">
-    <span class="num">18</span>
-    <span class="kicker">Case · 03</span>
-  </div>
-  <h2>需求 · <span class="gradient-cool">toko-pro 双轨 API 迁移</span></h2>
-  <div class="glow-line"></div>
-  <div class="case-grid">
-    <div>
-      <h4>需求背景（Go · 接手代码 · 我主导的 feature 链）</h4>
-      <p>遗留 <code>toko</code> 契约不能动，新版 <code>toko-pro</code> 在<strong>同一进程内并行上线</strong>。<br/>需要：HMAC 签名 / 字段加密 / Source-aware 路由 / 防跨源串调。</p>
-      <h4 style="margin-top:0.6em;color:var(--accent-3)">我做了什么</h4>
+      <h4>需求 · toko-pro 双轨 API 迁移（Go · feature 链）</h4>
+      <p>遗留 <code>toko</code> 契约不能动，新版 <code>toko-pro</code> 在<strong>同一进程内双轨上线</strong>：HMAC 签名 / 字段加密 / Source-aware 路由 / 防跨源串调。</p>
+      <h4 style="margin-top:0.6em;color:var(--accent-3)">印证 ❶ + ❷ · 业务契约注入 + 判断外置</h4>
       <ul style="font-size:0.88em">
-        <li>用 AI 配合产出 <strong>Phase 1–6 中文设计文档 + OpenAPI</strong>（121KB <code>tts-opanapi.yaml</code>），先把 webhook 签名 / 字段加密 / sync-create policy 流程在文档里对齐</li>
+        <li>用 AI 配合产出 <strong>Phase 1–6 中文设计文档 + OpenAPI</strong>（121KB <code>tts-opanapi.yaml</code>）——先把"双轨怎么不串"在文档里对齐再写代码</li>
         <li>把 design 切成 <strong>execution-index milestone</strong>，AI 一段段落代码，不一次性写崩</li>
         <li><strong>真链路集成测试</strong>：用 <code>webhook.site</code> 动态改写 attachment URL，断言 <code>x-tt-env</code> header <em>只</em>在 toko-pro 路径出现</li>
-        <li>9 条 <code>Co-authored: Cursor</code> commits 集中在 functional + test + Docker 修复</li>
-      </ul>
-      <h4 style="margin-top:0.6em">用到的 Vibe 实践</h4>
-      <ul style="font-size:0.88em">
-        <li><strong>Design-first 中文设计</strong>：在不熟的代码上，先想清楚"双轨怎么不串"再写</li>
-        <li><strong>脚手架生成 + AI 填肉</strong>：handler / DTO 由内部代码生成器出，AI 只补业务 logic + adapter + test</li>
-        <li><strong>Cross-source guard 单测先写</strong>：把"toko 不能调到 toko-pro"作为红线断言</li>
+        <li><strong>业务判断外置</strong>：phase 文档持续保留“旧契约不能动 / 新路径独立 / 不跨源串调”的判断，后续实现不依赖聊天记录</li>
       </ul>
     </div>
     <div style="display:flex;flex-direction:column;gap:1em;justify-content:center">
@@ -789,340 +583,133 @@ Next: /worktrail-distill
       </div>
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">9</div>
-          <div class="label">Co-authored commits</div>
+          <div class="num">~700+</div>
+          <div class="label">轮 Cursor 协作消息</div>
         </div>
       </div>
-      <blockquote style="font-size:0.85em">
-        <em>「<strong>我现在只要方案</strong>。<br/>切新分支，总结上面的讨论以及你的计划，<br/>落成方案文档。」</em><br/>
-        <span style="color:var(--fg-muted);font-size:0.78em">—— 真实 prompt，docs-first 触发器</span>
+      <blockquote style="font-size:0.82em">
+        <em>「<strong>先要方案</strong>。<br/>汇总上面的讨论和计划，<br/>落成方案文档。」</em><br/>
+        <span style="color:var(--fg-muted);font-size:0.78em">—— docs-first 触发器</span>
       </blockquote>
     </div>
   </div>
 </section>
 
-<!-- 24. Case 4: template-unify a2a -->
+<!-- 15. Case C · consumer-finance -->
 <section class="slide-content">
   <div class="slide-header">
-    <span class="num">19</span>
-    <span class="kicker">Case · 04</span>
+    <span class="num">13</span>
+    <span class="kicker">印证 C · 规则回归</span>
   </div>
-  <h2>需求 · <span class="gradient-cool">PH-Finbro 续保衍生 + Endorsement API</span></h2>
+  <h2>consumer-finance · <span class="gradient-cool">「业务规则不说清，AI 会写出能跑但错的代码」</span></h2>
   <div class="glow-line"></div>
   <div class="case-grid">
     <div>
-      <h4>需求背景（Go · 接手代码 · 我只做这条 feature 链）</h4>
-      <p>菲律宾 Finbro Partner 要支持续保：<strong>从历史 source policy 衍生新保单</strong>，<br/>同时补齐 Partner Endorsement API 的 skeleton。</p>
-      <h4 style="margin-top:0.6em;color:var(--accent-3)">我做了什么</h4>
-      <ul style="font-size:0.88em">
-        <li>设计并实现 <strong>续保衍生链路</strong>：<code>PhFinbroDerivedCreatePolicyAction</code> + <code>buildDerivedCreateData</code>——从 source policy meta 取 <code>acc_sum_insured</code> 反向写到新保单 <code>loan_amount</code></li>
-        <li>新增 <strong>Partner Endorsement API skeleton</strong>（<code>8e89b6c</code>）+ refactor 清理重复字段映射（<code>292f62e</code>）</li>
-        <li>产出 <strong>680 行单测</strong>（<code>impl_create_policy_test.go</code>） + <strong>724 行 dev 集成测试</strong>（<code>tmp/finbro_api_test/</code>，完整生命周期 Create → Duplicate → Endorse → Cancel）</li>
-        <li><strong>8 条 <code>Co-authored: Cursor</code></strong> commits 全部集中在 ph-finbro 分支</li>
-      </ul>
-      <h4 style="margin-top:0.6em">用到的 Vibe 实践</h4>
-      <ul style="font-size:0.88em">
-        <li><strong>对照已有 Strategy 让 AI 仿写</strong>：先让 AI 通读其他 Partner 的 Action，再生成 PhFinbro 的实现，结构一致</li>
-        <li><strong>测试先固化业务规则</strong>：先把 <code>acc_sum_insured → loan_amount</code> 这条映射写成 table-driven 单测，再补集成</li>
-        <li><strong>dev 环境真请求集成测试</strong>：独立目录跑完整 lifecycle，AI 生成 + 我手 review</li>
-      </ul>
+      <h4>需求 · PromptSpeed 包裹运输险（Go · 新 Partner 接入）</h4>
+      <p>泰国 PromptSpeed 接入<strong>包裹运输险（Transit）</strong>——在已有 IProduct 框架上扩展第 4 种产品类型，覆盖 FastQuote / Issue / 日报 / 邮件全链路。</p>
+      <h4 style="margin-top:0.6em;color:var(--accent-3)">印证 ❶ + ❸ · 业务规则注入 + 正确性回归</h4>
+      <p style="font-size:0.88em"><strong>tms_premium 故事：</strong> AI 第一版「优先 meta，旧数据 fallback policy.Premium」→ 明确「<em>不回退 policy.Premium</em>」→ AI 改严格依赖 → 又发现 Partner Config 生成器没把 <code>tms_premium</code> 写进 form meta → <strong>「报表逻辑 + 配置生成器」两段式修复</strong>。</p>
+      <p style="font-size:0.88em;margin-top:0.4em"><strong>双邮件 Bug：</strong> AI 想删一份 TH 配置；业务规则明确为「<em>配置中的邮件都要发送</em>」→ 改回保留 TH/EN，只过滤空模板。</p>
+      <p style="font-size:0.88em;margin-top:0.4em"><strong>延续范式：</strong>Claude 先写 plan/onboarding 文档（331 + 116 消息）→ Cursor 做迭代/配置/联调——关键不是换工具，而是<strong>业务判断被文档化后可以继续被注入</strong>。</p>
     </div>
     <div style="display:flex;flex-direction:column;gap:1em;justify-content:center">
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">680</div>
-          <div class="label">Action 单测行数</div>
+          <div class="num">743 + 402</div>
+          <div class="label">行 AI 辅助实施 plan</div>
         </div>
       </div>
-      <div class="card">
-        <div class="metric" style="padding:0">
-          <div class="num">724</div>
-          <div class="label">dev 集成测试行数</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="metric" style="padding:0">
-          <div class="num">8</div>
-          <div class="label">Co-authored commits</div>
-        </div>
-      </div>
-      <blockquote style="font-size:0.85em">
-        <em>「<strong>去掉所有这样的兼容</strong>。<br/>派生规则必须由代码强制保证。」</em><br/>
-        <span style="color:var(--fg-muted);font-size:0.78em">—— 真实 prompt，否决 AI 的「聪明 fallback」</span>
-      </blockquote>
-    </div>
-  </div>
-</section>
-
-<!-- 25. Case 5: consumer-finance -->
-<section class="slide-content">
-  <div class="slide-header">
-    <span class="num">20</span>
-    <span class="kicker">Case · 05</span>
-  </div>
-  <h2>需求 · <span class="gradient-cool">PromptSpeed 包裹运输险接入</span></h2>
-  <div class="glow-line"></div>
-  <div class="case-grid">
-    <div>
-      <h4>需求背景（Go · 接手代码 · 我主导这个新 Partner 接入）</h4>
-      <p>泰国 PromptSpeed Partner 接入<strong>包裹运输险（Transit）</strong>——在已有 IProduct 框架上<strong>扩展第 4 种产品类型</strong>，覆盖 FastQuote / Issue / 日报 / 邮件全链路。<br/>本人 24 commits，含 5 条 <code>Co-authored: Cursor</code> + 2 条 <code>Made-with: Cursor</code>。</p>
-      <h4 style="margin-top:0.6em;color:var(--accent-3)">我做了什么 · 5 周自然日 Plan-first 闭环（与 goto/template-unify 并行）</h4>
-      <div class="pipeline" style="margin-top:0.5em">
-        <div class="step">
-          <div class="step-num">W1</div>
-          <div class="step-title">PRD → 743 行 Plan</div>
-          <p>AI 写实施计划：设计决策 / 文件清单 / A/B 场景</p>
-        </div>
-        <div class="step">
-          <div class="step-num">W1</div>
-          <div class="step-title">核心实现</div>
-          <p>4 个文件 · CronJob/Apikey API · Partner Config 生成器</p>
-        </div>
-        <div class="step">
-          <div class="step-num">W2-4</div>
-          <div class="step-title">Focused 测试</div>
-          <p>validation · report rows · FastQuote params</p>
-        </div>
-        <div class="step">
-          <div class="step-num">W5</div>
-          <div class="step-title">Bugfix 马拉松</div>
-          <p>5/22 一天 5 个 worktrail handoff，记录完整迭代</p>
-        </div>
-      </div>
-      <h4 style="margin-top:0.8em">Bugfix 故事 · 一句话改变产品语义</h4>
-      <p style="font-size:0.86em"><strong>tms_premium：</strong> AI 第一版「优先 meta，旧数据 fallback policy.Premium」→ 我一句「<em>不回退 policy.Premium</em>」→ AI 改严格依赖→ 又发现 Partner Config 生成器没把 <code>tms_premium</code> 写进 form meta → <strong>最终是「报表逻辑 + 配置生成器」两段式修复</strong>。<br/><strong>双邮件 Bug：</strong> AI 想删一份 TH 配置，我说「<em>配置中的邮件都要发送哦</em>」→ 改回保留 TH/EN，只过滤空模板。</p>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:0.8em;justify-content:center">
       <div class="card">
         <div class="metric" style="padding:0">
           <div class="num">5 周</div>
-          <div class="label">自然日跨度<br/><span style="font-size:0.78em;opacity:0.7">与 goto / template-unify 并行</span></div>
+          <div class="label">自然日跨度<br/><span style="font-size:0.78em;opacity:0.7">长会话 + 多轮修正</span></div>
         </div>
       </div>
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">1650</div>
-          <div class="label">行 AI 辅助文档</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="metric" style="padding:0">
-          <div class="num">5</div>
-          <div class="label">Handoff · 一天内</div>
+          <div class="num">2 段式</div>
+          <div class="label">报表逻辑 + Config 生成器</div>
         </div>
       </div>
       <blockquote style="font-size:0.82em">
         <em>「<strong>不回退 policy.Premium</strong>。」<br/>「<strong>配置中的邮件都要发送哦</strong>。」</em><br/>
-        <span style="color:var(--fg-muted);font-size:0.78em">—— 两句 prompt 改变产品语义，AI 一次没猜对</span>
+        <span style="color:var(--fg-muted);font-size:0.78em">—— 两条业务规则改产品语义，AI 第一版没有猜对</span>
       </blockquote>
     </div>
   </div>
 </section>
-<!-- 25b. Case 6: Projex (project-management) -->
+
+<!-- =========================================================
+     SECTION 6 · 收尾 (2 pages)
+     ========================================================= -->
+
+<!-- 16. Anti-patterns + 5 actions -->
 <section class="slide-content">
   <div class="slide-header">
-    <span class="num">21</span>
-    <span class="kicker">Case · 06</span>
+    <span class="num">14</span>
+    <span class="kicker">Anti-patterns + Actions</span>
   </div>
-  <h2>Projex · <span class="gradient-cool">「Day 1 就 ship 了 v1.0 的 Local-first 桌面端」</span></h2>
+  <h2>反例库 + <span class="gradient-cool">6 个可执行动作</span></h2>
   <div class="glow-line"></div>
-  <div class="case-grid">
+  <div class="callout" style="background:rgba(255,92,174,0.08);border-left:3px solid var(--accent-2);margin-bottom:0.8em">
+    下面 6 个坑都有同一个内核：<strong>AI 很容易写出"能跑但业务不对"的代码</strong>。一旦把"review 一下"当作兜底，业务正确性就已经开始失控。
+  </div>
+  <div class="two-col" style="gap:2em">
     <div>
-      <h4>项目 · 个人 Local-first 项目管理工具（Rust + Tauri + React · <span class="pill ok">从零创建</span>）</h4>
-      <p>不上云的 Jira 替代品：<strong>SQLite + 可选 S3 同步</strong>，覆盖 macOS / Windows / Android。<br/>3 周<strong>自然日跨度</strong>从首 commit 到 v1.0.6（业余时间 · 工作日同时跑企业项目）。</p>
-      <h4 style="margin-top:0.6em;color:var(--accent-3)">第一条 commit 就是产品</h4>
-      <ul style="font-size:0.88em">
-        <li><strong>2026-02-10 首 commit</strong>：85 文件 / +10,288 行 / 含可打包 DMG / 含 759 行 PRD + 434 行 AGENTS.md</li>
-        <li>开发在 git 外完成首轮闭环——<strong>git 只是快照，不是开发节奏</strong></li>
-        <li>2/10–2/11 两天<strong>业余时间</strong> stacked delivery：Tiptap 富文本评论 / S3 同步 / i18n / GitHub Actions CI / v1.0.0 上线</li>
-        <li>2/27 一天 21 commits 完成 Android WorkManager + 移动端 UI + 签名 APK——<strong>agent 跑构建/签名时我去处理 goto 的 toko-pro 分支</strong></li>
-      </ul>
-      <h4 style="margin-top:0.6em">Vibe 实践（与企业项目互补）</h4>
-      <ul style="font-size:0.88em">
-        <li><strong>双文档驱动</strong>：PRD（1394 行）= Single Source of Truth · AGENTS.md（1114 行）= Agent 行为契约</li>
-        <li><strong>Clean Architecture + 250 Rust 集成测试</strong>是 AI 大胆改 sync/comment 的安全网</li>
-        <li><strong>Mermaid 图遍布</strong>设计文档：状态机、S3 同步、Logs Viewer 时序——AI 与人类对齐架构的通用语</li>
-        <li>刻意<strong>不要 Co-authored 痕迹</strong>：选 Conventional Commits + 单作者风格</li>
+      <h3 style="color:var(--danger)">⚠️ 反例库 · 业务正确性最容易失守的 6 坑</h3>
+      <ul style="font-size:0.86em">
+        <li><strong>AI Merge 会丢方法</strong>——能编译不代表链路完整，关键路径必须有回归门禁（真实 commit <code>fix: restore lost methods</code>）</li>
+        <li><strong>AI 爱给「聪明 fallback」</strong>——fallback 看起来稳，可能直接改变业务语义（"不回退 policy.Premium"）</li>
+        <li><strong>"修 bug" ≠ "理解需求"</strong>——AI 想删配置时，要回到业务规则：配置中的邮件都要发送</li>
+        <li><strong>测试覆盖"焦点过窄"</strong>——AI 倾向为当前 feature 写 focused 测试，覆盖矩阵需要靠 test-review-loop 自检</li>
+        <li><strong>Skill 不是越多越好</strong>——14 个 Skill 已是上限，"最多 4 个活跃"；太多规则会让 AI 抓不到真正业务约束</li>
+        <li><strong>「Plan 看起来完美」≠「可执行」</strong>——AI 写的 Plan 必须用真实仓库、真实契约、真实测试校验，不能用看的</li>
       </ul>
     </div>
-    <div style="display:flex;flex-direction:column;gap:0.8em;justify-content:center">
-      <div class="card">
-        <div class="metric" style="padding:0">
-          <div class="num">3 周</div>
-          <div class="label">自然日跨度<br/><span style="font-size:0.78em;opacity:0.7">业余 · 工作日并行企业项目</span></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="metric" style="padding:0">
-          <div class="num">250</div>
-          <div class="label">Rust 集成测试通过</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="metric" style="padding:0">
-          <div class="num">1394 + 1114</div>
-          <div class="label">行 PRD + AGENTS</div>
-        </div>
-      </div>
-      <blockquote style="font-size:0.82em">
-        <em>「不是 commit 驱动开发，<br/>是里程碑驱动；<br/>git 只是快照。」</em>
-      </blockquote>
+    <div>
+      <h3 style="color:var(--accent-4)">✓ 6 个可执行动作</h3>
+      <ul style="font-size:0.9em">
+        <li><strong>① 给当前高频协作代码库写 AGENTS.md</strong>——把业务规则、系统契约、不变量、必做/禁止项、验收标准写进去，3 小时内一版</li>
+        <li><strong>② 任务开始前先 worktrail context，结束前 handoff</strong>——把业务判断、决策理由、禁止项和未验证风险留在会话之外</li>
+        <li><strong>③ 要求 AI 在 plan 前列业务假设和影响面</strong>——字段来源、fallback、兼容策略、旧接口、报表、邮件、回调都要先摊开</li>
+        <li><strong>④ 把 1 个事中控制动作写成 Skill</strong>——例如“先列业务假设 / 影响面 / 验证缺口”，让 AI 每次实现前自动暴露</li>
+        <li><strong>⑤ 给 1 条关键链路补业务门禁</strong>——从契约、不变量、Golden Case、真实链路里任选一类，先把最怕错的场景自动化</li>
+        <li><strong>⑥ 要求 AI 交付证据包</strong>——每次完成后列出业务规则变更、不变量、跑过的门禁、未覆盖风险；review gate 先判断证据是否足够</li>
+      </ul>
     </div>
   </div>
 </section>
 
-<!-- 26. Section: Lessons -->
-<section class="section-divider">
-  <div class="part">PART · 05</div>
-  <div class="title gradient">经验 · 金句 · 展望</div>
-  <div class="desc">如果只能让你带走几页——这几页。</div>
-</section>
-
-<!-- 27. Lessons / Gotchas -->
-<section class="slide-content">
-  <div class="slide-header">
-    <span class="num">22</span>
-    <span class="kicker">Lessons</span>
-  </div>
-  <h2>真实踩坑 · <span class="gradient-cool">7 条带血的教训</span></h2>
-  <div class="glow-line"></div>
-  <div class="grid grid-2" style="gap:0.7em">
-    <div class="card" style="padding:0.9em 1.2em">
-      <span class="pill hot">Gotcha · 01</span>
-      <h4 style="margin-top:0.3em">AI Merge 会丢方法</h4>
-      <p style="font-size:0.85em">consumer-finance 真实 commit <code>d4b75b5 fix: restore lost methods</code>。<strong>AI 辅助 merge 必须人工 review</strong>。</p>
-    </div>
-    <div class="card" style="padding:0.9em 1.2em">
-      <span class="pill hot">Gotcha · 02</span>
-      <h4 style="margin-top:0.3em">AI 爱给「聪明 fallback」</h4>
-      <p style="font-size:0.85em">PromptSpeed 报表：AI 默认「优先 meta，失败回退 Premium」。一句「<strong><em>不回退 policy.Premium</em></strong>」改变了产品语义——<strong>边界要由我说，不是 AI 猜</strong>。</p>
-    </div>
-    <div class="card" style="padding:0.9em 1.2em">
-      <span class="pill hot">Gotcha · 03</span>
-      <h4 style="margin-top:0.3em">"修 bug" ≠ "理解需求"</h4>
-      <p style="font-size:0.85em">双邮件 bug，AI 想删 TH 配置；我说「<strong><em>配置中的邮件都要发送哦</em></strong>」——AI 第一反应是修代码，我得提醒它先确认业务规则。</p>
-    </div>
-    <div class="card" style="padding:0.9em 1.2em">
-      <span class="pill hot">Gotcha · 04</span>
-      <h4 style="margin-top:0.3em">Skill 不是越多越好</h4>
-      <p style="font-size:0.85em">14 个 Skill 已是上限，每个都付维护成本。<strong>"最多 4 个活跃" 是硬约束</strong>。</p>
-    </div>
-    <div class="card" style="padding:0.9em 1.2em">
-      <span class="pill hot">Gotcha · 05</span>
-      <h4 style="margin-top:0.3em">Cursor 没有项目级 Rules</h4>
-      <p style="font-size:0.85em">Codex/Claude 有完整 user/project 双层；Cursor 仅 User Rules，治理需手动复制。</p>
-    </div>
-    <div class="card" style="padding:0.9em 1.2em">
-      <span class="pill hot">Gotcha · 06</span>
-      <h4 style="margin-top:0.3em">Makefile 里的 DSN 别提交</h4>
-      <p style="font-size:0.85em">goto 项目 makefile 含 staging DSN——<strong>分享/截图前 redact 检查必做</strong>。</p>
-    </div>
-    <div class="card" style="padding:0.9em 1.2em" style="grid-column:1/-1">
-      <span class="pill hot">Gotcha · 07</span>
-      <h4 style="margin-top:0.3em">「Plan 看起来完美」≠「Plan 可执行」</h4>
-      <p style="font-size:0.85em">这是 <code>plan-review-loop</code> 单独存在的原因——AI 写的 Plan 必须用<strong>真实仓库</strong>校验，不能光读文字。</p>
-    </div>
-  </div>
-</section>
-
-<!-- 28. Money quotes -->
-<section class="slide-content">
-  <div class="slide-header">
-    <span class="num">23</span>
-    <span class="kicker">Quotes</span>
-  </div>
-  <h2>方法论金句 · <span class="gradient-cool">9 句话讲完 Vibe Coding</span></h2>
-  <div class="glow-line"></div>
-  <div class="grid grid-2" style="gap:0.7em">
-    <blockquote style="margin:0">
-      <strong>01 ·</strong> Skills 管纪律，Worktrail 管记忆 —— Vibe Coding 的左右脑。
-    </blockquote>
-    <blockquote style="margin:0">
-      <strong>02 ·</strong> 不是让 Agent 更忙，而是让每一步可验证、可交接、可审查。
-    </blockquote>
-    <blockquote style="margin:0">
-      <strong>03 ·</strong> 知识不进正式文档，先进 candidate 队列 —— AI 时代的 PR for Docs。
-    </blockquote>
-    <blockquote style="margin:0">
-      <strong>04 ·</strong> AI 输出永远是 advisory，validator + review gate 才是权威。
-    </blockquote>
-    <blockquote style="margin:0">
-      <strong>05 ·</strong> 小任务轻装备，大改动才升级 impact-analysis / multi-agent。
-    </blockquote>
-    <blockquote style="margin:0">
-      <strong>06 ·</strong> Local-first、无 daemon —— 工程师信任的是文件系统，不是又一个 SaaS。
-    </blockquote>
-    <blockquote style="margin:0">
-      <strong>07 ·</strong> 工程师的杠杆，是「<em>其它不变 / 不回退 / 去掉兼容 / 都要发送</em>」这种短句——比长 prompt 更有力。
-    </blockquote>
-    <blockquote style="margin:0;grid-column:1/-1;background:linear-gradient(160deg, rgba(124,92,255,0.18), rgba(0,212,255,0.08))">
-      <strong>08 ·</strong> 诚实地说：<strong>Agent 写代码大多数时候比我又快又好</strong>。我做的是它做不好的——<em>业务规则、跨模块边界、否决「聪明兼容」、多项目同时切换</em>。
-    </blockquote>
-    <blockquote style="margin:0;grid-column:1/-1;background:linear-gradient(160deg, rgba(255,92,174,0.12), rgba(124,92,255,0.08))">
-      <strong>09 ·</strong> Vibe Coding 的进阶形态 —— 不是只用 AI 写代码，而是<em>把 AI Agent 嵌入产品</em>，让运营/交付团队也能 Vibe 配置。
-    </blockquote>
-  </div>
-</section>
-
-<!-- 29. Vibe Coding 2.0 -->
-<section class="slide-content">
-  <div class="slide-header">
-    <span class="num">24</span>
-    <span class="kicker">Outlook</span>
-  </div>
-  <h2>展望 · <span class="gradient">Vibe Coding 2.0</span></h2>
-  <div class="glow-line"></div>
-  <div class="grid grid-3" style="gap:1em;margin-top:1em">
-    <div class="tool-card">
-      <span class="badge">SHIFT · 1</span>
-      <div class="name" style="font-size:1.2em">从写代码 → 配置平台</div>
-      <p style="font-size:0.9em">把 AI Agent 嵌入产品本身，让<strong>非工程角色</strong>也能 Vibe。<br/>case：template-unify <code>a2a</code> 分支。</p>
-    </div>
-    <div class="tool-card">
-      <span class="badge" style="background:var(--accent-2)">SHIFT · 2</span>
-      <div class="name" style="font-size:1.2em">从单 Agent → 多 Agent 编排</div>
-      <p style="font-size:0.9em">Lead / Runtime / Domain / QA 像虚拟团队。<br/>case：delivery-experts 6-Codex-Agent · 本次分享的 4-Subagent 调研。</p>
-    </div>
-    <div class="tool-card">
-      <span class="badge" style="background:var(--accent-3)">SHIFT · 3</span>
-      <div class="name" style="font-size:1.2em">从 Prompt → Skill / Contract</div>
-      <p style="font-size:0.9em">行为编码、版本化、测试化。<br/>case：agent-skills · prompt 即代码 · golden eval。</p>
-    </div>
-  </div>
-  <div class="callout" style="margin-top:1.5em">
-    下一步亲手要做的事：<br/>
-    <strong>①</strong> agent-skills + worktrail 开源 / 内部推广 ·
-    <strong>②</strong> 跨团队 Knowledge Pack 复用 ·
-    <strong>③</strong> Skill 触发率 + token 效率 dashboard ·
-    <strong>④</strong> 把 Vibe Coding 写进 onboarding。
-  </div>
-</section>
-
-<!-- 30. Thanks / Q&A -->
+<!-- 17. Closing · 4 sentences + invitation + Q&A -->
 <section class="cover" style="background:radial-gradient(ellipse at center, rgba(124,92,255,0.18), transparent 60%)">
   <div>
-    <div class="super-title gradient" style="font-size:7em">Thanks</div>
-    <div class="subtitle" style="font-size:1.6em;margin-top:1em;max-width:36ch">
-      Vibe Coding 不是终点，是<em>下一种工程文化的起点</em>。<br/>
-      欢迎一起踩坑、共同迭代。
+    <div class="super-title gradient" style="font-size:5em">三段控制 · 判断外置</div>
+    <p style="font-size:1em;color:var(--fg-muted);margin-top:0.6em">AI 高速写代码不是问题，业务正确性失控才是问题。</p>
+    <div style="margin-top:1.4em;display:flex;flex-direction:column;gap:0.7em;max-width:44em;margin-left:auto;margin-right:auto;text-align:left">
+      <blockquote style="margin:0;border-left:3px solid var(--accent);font-size:0.95em">
+        <strong>① 事前：</strong>把<em>业务规则 / 契约 / 不变量 / 必做项</em>注入给 AI，不再逐行兜底。
+      </blockquote>
+      <blockquote style="margin:0;border-left:3px solid var(--accent-2);font-size:0.95em">
+        <strong>② 事中：</strong>让 AI 持续暴露<em>假设 / 影响面 / 计划 / 阶段结果 / 验证缺口</em>。
+      </blockquote>
+      <blockquote style="margin:0;border-left:3px solid var(--accent-3);font-size:0.95em">
+        <strong>③ 事后：</strong>AI 输出永远是 proposal，<em>契约 / 不变量 / Golden / 链路 / 证据包</em> 才是门禁。
+      </blockquote>
+      <blockquote style="margin:0;border-left:3px solid var(--accent-4);font-size:0.95em">
+        <strong>④ 判断外置：</strong>把<em>为什么这么做 / 哪些不能改 / 哪些还没验证</em>从聊天记录里拿出来。
+      </blockquote>
     </div>
-    <div style="margin-top:3em;display:flex;gap:1.5em;justify-content:center;flex-wrap:wrap">
-      <span class="project-tag">agent-skills</span>
-      <span class="project-tag">worktrail</span>
-      <span class="project-tag">coi-forge</span>
-      <span class="project-tag">delivery-experts</span>
-      <span class="project-tag">projex</span>
-      <span class="project-tag">goto</span>
-      <span class="project-tag">template-unify</span>
-      <span class="project-tag">consumer-finance</span>
+    <div class="callout ok" style="margin-top:1.6em;max-width:44em;margin-left:auto;margin-right:auto;text-align:left">
+      <strong>一个邀请 · </strong>这套机制仍在持续实践。后续会尝试沉淀成<em>公司 AI 开发流程规范</em>的雏形——本次先作为个人实践分享，不展开组织流程。
     </div>
-    <div class="author-line" style="margin-top:3.5em;justify-content:center">
+    <div class="author-line" style="margin-top:2.5em;justify-content:center">
       <span>Q&A</span>
       <span>Demo on Demand</span>
-      <span>Reach me anytime</span>
+      <span>Follow-up Discussion</span>
     </div>
   </div>
 </section>
+
 </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
