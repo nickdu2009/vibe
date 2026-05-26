@@ -14,14 +14,6 @@
 <body>
 <div class="reveal">
 <div class="watermark">Nick Du · 2026</div>
-<div class="nav-tools" aria-label="幻灯片导航">
-  <button type="button" onclick="navFirst()" title="跳到首页 (Home)">⏮ 首页</button>
-  <span class="nav-go">
-    <input type="number" min="1" placeholder="#" id="nav-page-input" aria-label="跳转到指定页" />
-    <button type="button" onclick="navGo()" title="跳转到指定页">GO</button>
-  </span>
-  <button type="button" onclick="navLast()" title="跳到尾页 (End)">尾页 ⏭</button>
-</div>
 <div class="slides">
 
 <!-- =========================================================
@@ -902,29 +894,7 @@ $ worktrail review plan --format json</code></pre>
       el.removeAttribute('data-processed');
       mermaid.render('m' + i, src).then(({ svg }) => { el.innerHTML = svg; });
     });
-
-    const navInput = document.getElementById('nav-page-input');
-    if (navInput) {
-      navInput.max = Reveal.getTotalSlides();
-      navInput.placeholder = '1-' + Reveal.getTotalSlides();
-      navInput.addEventListener('keydown', (e) => {
-        e.stopPropagation();
-        if (e.key === 'Enter') { e.preventDefault(); navGo(); }
-      });
-    }
   });
-
-  function navFirst() { Reveal.slide(0); }
-  function navLast() { Reveal.slide(Reveal.getTotalSlides() - 1); }
-  function navGo() {
-    const input = document.getElementById('nav-page-input');
-    const n = parseInt(input.value, 10);
-    if (Number.isFinite(n) && n >= 1 && n <= Reveal.getTotalSlides()) {
-      Reveal.slide(n - 1);
-    }
-    input.value = '';
-    input.blur();
-  }
 </script>
 </body>
 </html>
