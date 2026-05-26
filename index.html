@@ -505,45 +505,45 @@ $ worktrail review plan --format json</code></pre>
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">11</span>
-    <span class="kicker">印证 A · Agent Harness</span>
+    <span class="kicker">印证 A · AI 主导开发</span>
   </div>
-  <h2>coi-forge · <span class="gradient-cool">把 AI coding 包进 Agent Harness</span></h2>
+  <h2>coi-forge · <span class="gradient-cool">66 个 session 写出 ~51K 行，每一波都过门禁</span></h2>
   <div class="glow-line"></div>
   <div class="case-grid">
     <div>
-      <h4>实践 · 保险凭证（COI）模板配置 + PDF 预览 MVP（TypeScript 全栈）</h4>
-      <p>Schema 驱动配置，三种渲染模式（HTML / PDF Overlay / PDF-only Discovery）。更重要的是探索一个可控的 <strong>Agent Harness</strong>：AI 负责 proposal，validator / review gate 决定能否进入结果。</p>
-      <h4 style="margin-top:0.8em;color:var(--accent-3)">印证 ❶ + ❸ · Agent Harness + 正确性证明</h4>
-      <ul style="font-size:0.88em">
-        <li><strong>Prompt 即代码</strong>：6 个 prompt 带版本号（如 <code>2026-05-17.1</code>），改 prompt = 跑 eval</li>
-        <li><strong>Agent Harness 回路</strong>：prompt → proposal → validator → review gate → accepted / discarded，全链路可追溯</li>
-        <li><strong>Golden Eval 体系</strong>：15+ eval 脚本，AI 输出像 API 一样可回归</li>
-        <li><strong>Tool API + MCP 双暴露</strong>：同一业务能力同时服务 UI 和外部 Agent</li>
-        <li><strong>Semantic Guard</strong>：脚本防止 AI 走捷径硬编码保险别名回流仓库</li>
-        <li><strong>discarded_candidates</strong>：让淘汰项可见，而非静默丢弃——AI 输出永远可追溯</li>
+      <h4>实践 · 从零开始、AI 主导产出的 TypeScript 全栈项目</h4>
+      <p style="font-size:0.92em">AI 主导写出 ~51K 行实现，业务正确性靠三段控制 + 判断外置兜住，而不是写完再 review 一遍。</p>
+      <h4 style="margin-top:0.6em;color:var(--accent-3)">印证 ❶❷❸❹ · 三段控制 + 判断外置</h4>
+      <ul style="font-size:0.84em">
+        <li><strong>① 事前注入</strong>：16 篇 <code>architecture/*.md</code> + <code>decisions/*.md</code> 写在 AI 面前；新 session 第一句往往是 <em>「严格遵循 architecture/&lt;doc&gt;.md」</em></li>
+        <li><strong>② 事中校正</strong>：用真实保单 case（personal-accident-coi / motolite / philbritish-coc）反复跑 AI 输出；不对就追问、不收窄就重做</li>
+        <li><strong>③ 事后证明</strong>：41 份 <code>validation/implementation-validation-2026-05-*.md</code>；一句 <em>「llm discover 的 prompt 如何评估」</em> 直接催生 golden eval 体系</li>
+        <li><strong>④ 判断外置</strong>：Worktrail handoff 跨 session 接力（<code>请继续这个 handoff: handoff-20260520t150419z</code>），新 worktree 不靠聊天记录</li>
       </ul>
+      <p style="font-size:0.82em;color:var(--fg-muted);margin-top:0.5em"><strong>反向沉淀：</strong> <code>plan-review-loop</code> / <code>impl-review-loop</code> 两个 Skill 就是先在这个项目里跑通，再抽到 <code>agent-skills</code> 仓库——事中控制工具是被业务正确性需求逼出来的。</p>
     </div>
     <div style="display:flex;flex-direction:column;gap:1em;justify-content:center">
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">~51K</div>
-          <div class="label">行 TS 全栈代码</div>
+          <div class="num">66</div>
+          <div class="label">Cursor session<br/><span style="font-size:0.78em;opacity:0.7">AI 协作密度</span></div>
         </div>
       </div>
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">339</div>
-          <div class="label">.worktrail/ 知识文档</div>
+          <div class="num">41</div>
+          <div class="label">validation 验证记录<br/><span style="font-size:0.78em;opacity:0.7">事后门禁痕迹</span></div>
         </div>
       </div>
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">53</div>
-          <div class="label">测试文件 · 350+ 用例</div>
+          <div class="num">16</div>
+          <div class="label">architecture 契约文档<br/><span style="font-size:0.78em;opacity:0.7">事前注入载体</span></div>
         </div>
       </div>
-      <blockquote style="font-size:0.85em">
-        <em>「AI 输出永远是 advisory，<br/>validator 才是权威。<br/><code>discarded_candidates</code> 让淘汰项可见，<br/>而非静默丢弃。」</em>
+      <blockquote style="font-size:0.82em">
+        <em>「请继续这个 Worktrail handoff：<br/><code>handoff-20260520t150419z</code>」</em><br/>
+        <span style="color:var(--fg-muted);font-size:0.78em">—— 新 session 第一句，判断不靠聊天记录</span>
       </blockquote>
     </div>
   </div>
@@ -553,44 +553,45 @@ $ worktrail review plan --format json</code></pre>
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">12</span>
-    <span class="kicker">印证 B · 契约先行</span>
+    <span class="kicker">印证 B · docs-first 流水线</span>
   </div>
-  <h2>goto · <span class="gradient-cool">「先把业务契约写进方案，再让 AI 写代码」</span></h2>
+  <h2>goto · <span class="gradient-cool">design → /phase-plan → /phase-execute · AI 按规范执行，不凭直觉写</span></h2>
   <div class="glow-line"></div>
   <div class="case-grid">
     <div>
-      <h4>需求 · toko-pro 双轨 API 迁移（Go · feature 链）</h4>
-      <p>遗留 <code>toko</code> 契约不能动，新版 <code>toko-pro</code> 在<strong>同一进程内双轨上线</strong>：HMAC 签名 / 字段加密 / Source-aware 路由 / 防跨源串调。</p>
-      <h4 style="margin-top:0.6em;color:var(--accent-3)">印证 ❶ + ❷ · 业务契约注入 + 判断外置</h4>
-      <ul style="font-size:0.88em">
-        <li>用 AI 配合产出 <strong>Phase 1–6 中文设计文档 + OpenAPI</strong>（121KB <code>tts-opanapi.yaml</code>）——先把"双轨怎么不串"在文档里对齐再写代码</li>
-        <li>把 design 切成 <strong>execution-index milestone</strong>，AI 一段段落代码，不一次性写崩</li>
-        <li><strong>真链路集成测试</strong>：用 <code>webhook.site</code> 动态改写 attachment URL，断言 <code>x-tt-env</code> header <em>只</em>在 toko-pro 路径出现</li>
-        <li><strong>业务判断外置</strong>：phase 文档持续保留“旧契约不能动 / 新路径独立 / 不跨源串调”的判断，后续实现不依赖聊天记录</li>
+      <h4>需求 · toko-pro 双轨 API 迁移（Go · 双轨同进程上线）</h4>
+      <p style="font-size:0.92em">最怕的不是代码不跑，是 <strong>toko / toko-pro 双轨在数据、路由、签名、加密任何一层串源</strong>。靠"写完再 review"挡不住——必须把契约和流程都先写进文档，AI 才动代码。</p>
+      <h4 style="margin-top:0.6em;color:var(--accent-3)">印证 ❶❷❸❹ · 三段控制 + 判断外置</h4>
+      <ul style="font-size:0.84em">
+        <li><strong>① 事前注入</strong>：<code>AGENTS.md</code>（12 段规则：Before Coding / Change / Validation / Done Criteria…）+ <code>docs/design/*.md</code> 14 篇中文设计 + 121KB <code>tts-opanapi.yaml</code> + 24 篇 phase 文档（<code>plan.yaml is the only execution authority</code>）</li>
+        <li><strong>② 事中校正（流水线）</strong>：自定义命令把流程锁住——<code>/phase-plan</code> 按 design 生成 phase yaml → <code>/phase-plan-review</code> 审 → <code>/phase-execute</code> 跑 wave → <em>「审核 phase N 的实现」</em>，每一波先评再写</li>
+        <li><strong>③ 事后证明</strong>：staging 真实 claim id（<code>TKPDGADGT1Y2026...</code>）直接拉日志验证 webhook；HMAC 集成测试带环境变量开关；<code>webhook.site</code> 断言 <code>x-tt-env</code> header <em>只</em>在 toko-pro 路径出现</li>
+        <li><strong>④ 判断外置</strong>：跨 session 直接 <code>@</code> 引用上一个 session 的 jsonl；跨仓库 <code>@/axinan/goto</code> legacy 路径让 AI 行级对比；双轨契约同时锁在 <code>tts-opanapi.yaml</code> 与 <code>tkpd-single-policy-openapi.yaml</code></li>
       </ul>
+      <p style="font-size:0.82em;color:var(--fg-muted);margin-top:0.5em"><strong>真问题 ≠ 写代码：</strong> "Toko pro 和 Legacy 会数据交叉吗"、"<code>app</code> header 是否被两边都接受"、"Legacy 创建的 policy 能否被 toko-pro 处理 claim"——这些业务判断必须在文档里被锁死，AI 才不会越界。</p>
     </div>
     <div style="display:flex;flex-direction:column;gap:1em;justify-content:center">
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">6</div>
-          <div class="label">Phase 设计文档</div>
+          <div class="num">118</div>
+          <div class="label">Cursor session<br/><span style="font-size:0.78em;opacity:0.7">AI 协作密度</span></div>
         </div>
       </div>
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">24</div>
-          <div class="label">集成测试用例</div>
+          <div class="num">14 + 24</div>
+          <div class="label">design 设计 + phase 执行<br/><span style="font-size:0.78em;opacity:0.7">事前注入载体</span></div>
         </div>
       </div>
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">~700+</div>
-          <div class="label">轮 Cursor 协作消息</div>
+          <div class="num">/phase-*</div>
+          <div class="label">自定义流水线命令<br/><span style="font-size:0.78em;opacity:0.7">事中流程锁</span></div>
         </div>
       </div>
       <blockquote style="font-size:0.82em">
-        <em>「<strong>先要方案</strong>。<br/>汇总上面的讨论和计划，<br/>落成方案文档。」</em><br/>
-        <span style="color:var(--fg-muted);font-size:0.78em">—— docs-first 触发器</span>
+        <em>「<code>/phase-plan</code> 按照<br/><code>@docs/design/toko-pro-create-policy-sync-design-zh.md</code><br/>规划实施计划」</em><br/>
+        <span style="color:var(--fg-muted);font-size:0.78em">—— design → phase 的真实第一句</span>
       </blockquote>
     </div>
   </div>
@@ -600,41 +601,45 @@ $ worktrail review plan --format json</code></pre>
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">13</span>
-    <span class="kicker">印证 C · 规则回归</span>
+    <span class="kicker">印证 C · 规则锁定 + 真实事故回归</span>
   </div>
   <h2>consumer-finance · <span class="gradient-cool">「业务规则不说清，AI 会写出能跑但错的代码」</span></h2>
   <div class="glow-line"></div>
   <div class="case-grid">
     <div>
-      <h4>需求 · PromptSpeed 包裹运输险（Go · 新 Partner 接入）</h4>
-      <p>泰国 PromptSpeed 接入<strong>包裹运输险（Transit）</strong>——在已有 IProduct 框架上扩展第 4 种产品类型，覆盖 FastQuote / Issue / 日报 / 邮件全链路。</p>
-      <h4 style="margin-top:0.6em;color:var(--accent-3)">印证 ❶ + ❸ · 业务规则注入 + 正确性回归</h4>
-      <p style="font-size:0.88em"><strong>tms_premium 故事：</strong> AI 第一版「优先 meta，旧数据 fallback policy.Premium」→ 明确「<em>不回退 policy.Premium</em>」→ AI 改严格依赖 → 又发现 Partner Config 生成器没把 <code>tms_premium</code> 写进 form meta → <strong>「报表逻辑 + 配置生成器」两段式修复</strong>。</p>
-      <p style="font-size:0.88em;margin-top:0.4em"><strong>双邮件 Bug：</strong> AI 想删一份 TH 配置；业务规则明确为「<em>配置中的邮件都要发送</em>」→ 改回保留 TH/EN，只过滤空模板。</p>
-      <p style="font-size:0.88em;margin-top:0.4em"><strong>延续范式：</strong>Claude 先写 plan/onboarding 文档（331 + 116 消息）→ Cursor 做迭代/配置/联调——关键不是换工具，而是<strong>业务判断被文档化后可以继续被注入</strong>。</p>
+      <h4>需求 · PromptSpeed 包裹运输险（Go · Transit / Cancel / 报表 / 邮件全链路）</h4>
+      <p style="font-size:0.92em">在已有 IProduct 框架上扩展第 4 种产品类型；先把业务判断锁进 plan 文档和环境配置，再让 AI 小步实现，用真实 staging 事故触发回归。</p>
+      <h4 style="margin-top:0.6em;color:var(--accent-3)">印证 ❶❷❸❹ · 三段控制 + 判断外置</h4>
+      <ul style="font-size:0.84em">
+        <li><strong>① 事前注入</strong>：项目中文说明 + <code>docs/promptspeed-transit-implementation-plan.md</code> + <code>docs/cronjob-implementation-plan.md</code> + <code>promptspeed.yaml</code> API 契约</li>
+        <li><strong>② 事中校正</strong>：每次 AI 第一版都用一句具体业务规则校正——<em>「不回退 <code>policy.Premium</code>」、「配置中的邮件都要发送」、「<code>Cargo category eligibility</code> 校验需要去掉」、「Cancel 要支持 <code>partner_order_id</code> 和 <code>cancellation_datetime</code>」</em></li>
+        <li><strong>③ 事后证明</strong>：用 <code>partner-config.{dev,qa,staging}.json</code> 三套环境配置跑联调和回归；staging 真实事故触发倒查——<em>「5 月 9 号创建和 cancel 的 policy，邮件附件中的数据仍为空」</em>；<code>tms_premium</code> 修完报表又抓出 partner config 生成器漏映射，两段式修复</li>
+        <li><strong>④ 判断外置</strong>：先做大动作 plan / onboarding（最大单段 331、116 轮对话产出），把"为什么这么做、哪些不能改、哪些 fallback 被禁止"沉淀进文件；再做小步迭代落实现。判断在 plan + 项目说明 + partner config 里，跨会话不丢</li>
+      </ul>
+      <p style="font-size:0.82em;color:var(--fg-muted);margin-top:0.5em"><strong>共同模式：</strong>AI 第一版总是技术上 reasonable + 业务上偷偷加 fallback / 删配置 / 接受空模板——业务正确性的差距往往不是代码问题，是规则没说清。</p>
     </div>
     <div style="display:flex;flex-direction:column;gap:1em;justify-content:center">
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">743 + 402</div>
-          <div class="label">行 AI 辅助实施 plan</div>
+          <div class="num">35</div>
+          <div class="label">段 AI 协作<br/><span style="font-size:0.78em;opacity:0.7">大动作 plan + 小步迭代</span></div>
         </div>
       </div>
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">5 周</div>
-          <div class="label">自然日跨度<br/><span style="font-size:0.78em;opacity:0.7">长会话 + 多轮修正</span></div>
+          <div class="num">331 / 116</div>
+          <div class="label">最大两段 plan 对话<br/><span style="font-size:0.78em;opacity:0.7">业务判断锁进文档</span></div>
         </div>
       </div>
       <div class="card">
         <div class="metric" style="padding:0">
-          <div class="num">2 段式</div>
-          <div class="label">报表逻辑 + Config 生成器</div>
+          <div class="num">4 条</div>
+          <div class="label">业务规则纠正<br/><span style="font-size:0.78em;opacity:0.7">AI 第一版没猜对</span></div>
         </div>
       </div>
       <blockquote style="font-size:0.82em">
-        <em>「<strong>不回退 policy.Premium</strong>。」<br/>「<strong>配置中的邮件都要发送哦</strong>。」</em><br/>
-        <span style="color:var(--fg-muted);font-size:0.78em">—— 两条业务规则改产品语义，AI 第一版没有猜对</span>
+        <em>「<strong>不回退 policy.Premium</strong>」<br/>「<strong>配置中的邮件都要发送</strong>」</em><br/>
+        <span style="color:var(--fg-muted);font-size:0.78em">—— 一句业务规则改产品语义，AI 第一版没猜对</span>
       </blockquote>
     </div>
   </div>

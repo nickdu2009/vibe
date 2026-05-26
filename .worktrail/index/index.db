@@ -1,0 +1,18 @@
+{
+  "schema": "worktrail.index.db.v1",
+  "generated_at": "2026-05-25T05:38:09.888991Z",
+  "entries": [
+    {
+      "schema": "worktrail.index.entry.v1",
+      "id": "handoff-20260525t052824z",
+      "scope": "project",
+      "type": "candidate",
+      "path": "candidates/project/handoff-20260525t052824z.md",
+      "title": "Handoff",
+      "status": "pending",
+      "content": "# Handoff: Handoff\n\n更新 Vibe Coding PPT 主线：将 review 带宽作为旧模式失效的症状，将业务正确性作为目标；封面、Agenda、Reality、Shift、Q1/Q2/Q3、闭环图、案例、行动清单和收尾均已调整；清理短句/否决短句等残留；验证 index.html 无 lint，本地 http://localhost:7788/index.html 返回 200。",
+      "updated_at": "2026-05-25T13:28:24.606926+08:00",
+      "candidate_type": "handoff"
+    }
+  ]
+}

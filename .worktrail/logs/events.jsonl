@@ -1,0 +1,11 @@
+{"time":"2026-05-25T13:28:24.608543+08:00","event":"candidate.create","id":"handoff-20260525t052824z","actor":"cli:handoff","data":{"redaction":"clean","target_path":"handoffs/20260525-052824-handoff.md"}}
+{"time":"2026-05-25T13:39:11.838037+08:00","event":"candidate.create","id":"handoff-20260525t053911z","actor":"cli:handoff","data":{"redaction":"clean","target_path":"handoffs/20260525-053911-handoff.md"}}
+{"time":"2026-05-25T13:52:18.934623+08:00","event":"candidate.create","id":"handoff-20260525t055218z","actor":"cli:handoff","data":{"redaction":"clean","target_path":"handoffs/20260525-055218-handoff.md"}}
+{"time":"2026-05-25T14:02:06.02655+08:00","event":"candidate.create","id":"handoff-20260525t060206z","actor":"cli:handoff","data":{"redaction":"clean","target_path":"handoffs/20260525-060206-handoff.md"}}
+{"time":"2026-05-25T14:37:53.644417+08:00","event":"candidate.create","id":"handoff-20260525t063753z","actor":"cli:handoff","data":{"redaction":"clean","target_path":"handoffs/20260525-063753-handoff.md"}}
+{"time":"2026-05-25T14:42:02.27087+08:00","event":"candidate.create","id":"handoff-20260525t064202z","actor":"cli:handoff","data":{"redaction":"clean","target_path":"handoffs/20260525-064202-handoff.md"}}
+{"time":"2026-05-25T15:47:03.249591+08:00","event":"candidate.create","id":"handoff-20260525t074703z","actor":"cli:handoff","data":{"redaction":"clean","target_path":"handoffs/20260525-074703-handoff.md"}}
+{"time":"2026-05-25T16:29:47.341809+08:00","event":"candidate.create","id":"handoff-20260525t082947z","actor":"cli:handoff","data":{"redaction":"clean","target_path":"handoffs/20260525-082947-handoff.md"}}
+{"time":"2026-05-25T16:53:37.98124+08:00","event":"candidate.create","id":"handoff-20260525t085337z","actor":"cli:handoff","data":{"redaction":"clean","target_path":"handoffs/20260525-085337-handoff.md"}}
+{"time":"2026-05-25T17:11:16.766799+08:00","event":"candidate.create","id":"handoff-20260525t091116z","actor":"cli:handoff","data":{"redaction":"clean","target_path":"handoffs/20260525-091116-handoff.md"}}
+{"time":"2026-05-25T17:25:26.831308+08:00","event":"candidate.create","id":"handoff-20260525t092526z","actor":"cli:handoff","data":{"redaction":"clean","target_path":"handoffs/20260525-092526-handoff.md"}}
