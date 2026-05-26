@@ -505,17 +505,18 @@ $ worktrail review plan --format json</code></pre>
 <section class="slide-content">
   <div class="slide-header">
     <span class="num">11</span>
-    <span class="kicker">印证 A · 正确性门禁</span>
+    <span class="kicker">印证 A · Agent Harness</span>
   </div>
-  <h2>coi-forge · <span class="gradient-cool">"把业务正确性做成门禁"</span></h2>
+  <h2>coi-forge · <span class="gradient-cool">把 AI coding 包进 Agent Harness</span></h2>
   <div class="glow-line"></div>
   <div class="case-grid">
     <div>
       <h4>实践 · 保险凭证（COI）模板配置 + PDF 预览 MVP（TypeScript 全栈）</h4>
-      <p>Schema 驱动配置，三种渲染模式（HTML / PDF Overlay / PDF-only Discovery），AI Vision 提案 + 后端 Validator + Review Gate。</p>
-      <h4 style="margin-top:0.8em;color:var(--accent-3)">印证 ❶ + ❸ · 意图注入 + 正确性证明</h4>
+      <p>Schema 驱动配置，三种渲染模式（HTML / PDF Overlay / PDF-only Discovery）。更重要的是探索一个可控的 <strong>Agent Harness</strong>：AI 负责 proposal，validator / review gate 决定能否进入结果。</p>
+      <h4 style="margin-top:0.8em;color:var(--accent-3)">印证 ❶ + ❸ · Agent Harness + 正确性证明</h4>
       <ul style="font-size:0.88em">
         <li><strong>Prompt 即代码</strong>：6 个 prompt 带版本号（如 <code>2026-05-17.1</code>），改 prompt = 跑 eval</li>
+        <li><strong>Agent Harness 回路</strong>：prompt → proposal → validator → review gate → accepted / discarded，全链路可追溯</li>
         <li><strong>Golden Eval 体系</strong>：15+ eval 脚本，AI 输出像 API 一样可回归</li>
         <li><strong>Tool API + MCP 双暴露</strong>：同一业务能力同时服务 UI 和外部 Agent</li>
         <li><strong>Semantic Guard</strong>：脚本防止 AI 走捷径硬编码保险别名回流仓库</li>

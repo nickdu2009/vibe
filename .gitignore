@@ -18,3 +18,6 @@ node_modules/
 
 # OS
 Thumbs.db
+
+# Worktrail (local agent knowledge)
+.worktrail/
