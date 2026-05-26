@@ -491,9 +491,9 @@ $ worktrail review plan --format json</code></pre>
     classDef q2 fill:#1a1a2e,stroke:#ffb84d,color:#fff
     classDef q3 fill:#1a1a2e,stroke:#00d4ff,color:#fff
     classDef mem fill:#1a1a2e,stroke:#5cffb1,color:#fff"
-    style="height:540px"></div>
-  <div class="callout ok" style="margin-top:0.6em">
-    <strong>三段控制 + 业务判断外置：</strong>事前注入业务意图，事中暴露并校正假设，事后用 5 道门禁证明正确；业务判断从聊天记录中抽取出来，贯穿三段，避免判断漂移。<u>这套机制共同替代旧的"写完代码再 review 一下"。</u>
+    style="height:460px"></div>
+  <div class="callout ok" style="margin-top:0.6em;font-size:0.92em">
+    <strong>三段控制 + 判断外置：</strong>事前注入意图，事中校正假设，事后用 5 门禁证明正确，判断贯穿三段不漂移——共同替代"写完再 review 一下"。
   </div>
 </section>
 
@@ -726,7 +726,101 @@ $ worktrail review plan --format json</code></pre>
   </div>
 </section>
 
-<!-- 18. Closing · 4 sentences + invitation + Q&A -->
+<!-- 18. agent-skills · behavior library -->
+<section class="slide-content">
+  <div class="slide-header">
+    <span class="num">16</span>
+    <span class="kicker">Tool · agent-skills</span>
+  </div>
+  <h2>agent-skills · <span class="gradient-cool">把行为模式沉淀成 AI 的"动作库"</span></h2>
+  <div class="glow-line"></div>
+  <div class="callout" style="background:rgba(124,92,255,0.08);border-left:3px solid var(--accent);margin-bottom:0.8em">
+    Skill ≠ prompt。它是 <strong>触发条件 + 强制动作 + never 列表</strong> 的可复用行为单元——Markdown + frontmatter，git 友好，跨项目复用。AI 看到匹配关键词就<strong>必须</strong>读 <code>SKILL.md</code> 再动手。
+  </div>
+  <div class="two-col" style="gap:2em">
+    <div>
+      <h3 style="color:var(--accent-2)">一个 Skill 的 4 件套</h3>
+      <ul style="font-size:0.86em">
+        <li><strong>① WHEN · 触发条件</strong>——什么任务关键词 / 什么场景会唤醒这个 Skill</li>
+        <li><strong>② Required actions · 强制动作</strong>——必须执行的步骤，不能"看着像就跳过"</li>
+        <li><strong>③ Never · 禁止项</strong>——明确不能做的事，兜住 AI 的"聪明 fallback"</li>
+        <li><strong>④ Examples · 例子</strong>——什么算用对、什么算不该触发，给 AI 边界感</li>
+      </ul>
+      <p style="font-size:0.84em;color:var(--fg-muted);margin-top:0.5em">关键不在 prompt 优雅，在 <strong>触发明确 + 动作可验证 + never 兜底</strong>——机制可追溯。</p>
+    </div>
+    <div>
+      <h3 style="color:var(--accent-3)">14 个 Skill 按三段控制分组</h3>
+      <ul style="font-size:0.84em">
+        <li><strong>事前注入（5）</strong>：<code>design-before-plan</code> · <code>requirements-review-loop</code> · <code>impact-analysis</code> · <code>scoped-tasking</code> · <code>manage-agents-md</code></li>
+        <li><strong>事中校正（5）</strong>：<code>plan-review-loop</code> · <code>design-review-loop</code> · <code>multi-agent-protocol</code> · <code>safe-refactor</code> · <code>bugfix-workflow</code></li>
+        <li><strong>事后证明（4）</strong>：<code>code-review-loop</code> · <code>test-review-loop</code> · <code>self-review</code> · <code>targeted-validation</code></li>
+      </ul>
+      <p style="font-size:0.84em;color:var(--fg-muted);margin-top:0.5em"><strong>反例：</strong>Skill 不是越多越好——同时活跃 ≤ 4 才有意义，否则规则之间会打架，AI 抓不到真正业务约束。</p>
+    </div>
+  </div>
+  <div class="callout ok" style="margin-top:0.8em">
+    <strong>沉淀路径：</strong>项目里反复用到的动作 → 在项目里先跑通 → 抽到 <code>agent-skills</code> 仓库 → 跨项目复用。<u>事中控制工具不是凭空设计，是被业务正确性需求逼出来的</u>（<code>plan-review-loop</code> / <code>impl-review-loop</code> 都从 coi-forge 项目里抽出来的）。
+  </div>
+</section>
+
+<!-- 19. agent-skills × worktrail · interplay -->
+<section class="slide-content">
+  <div class="slide-header">
+    <span class="num">17</span>
+    <span class="kicker">Tool · 互补关系</span>
+  </div>
+  <h2>agent-skills × worktrail · <span class="gradient-cool">行为 × 状态 · AI 协作的两条腿</span></h2>
+  <div class="glow-line"></div>
+  <div class="callout" style="background:rgba(0,212,255,0.08);border-left:3px solid var(--accent-3);margin-bottom:0.8em">
+    一个解决<strong>"做什么 / 怎么做"</strong>，一个解决<strong>"为什么 / 哪些不能改"</strong>。缺一项业务正确性都会漏——单靠 Skill 流程跑得对，但跨会话会忘业务判断；单靠 worktrail 留住判断，但每次还要从头讲一遍流程。
+  </div>
+  <table style="font-size:0.88em;width:100%;margin-top:0.4em">
+    <thead>
+      <tr>
+        <th style="width:18%"></th>
+        <th style="color:var(--accent-2);width:41%">agent-skills</th>
+        <th style="color:var(--accent-3);width:41%">worktrail</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>解决的问题</strong></td>
+        <td>做什么 / 怎么做（行为）</td>
+        <td>为什么 / 哪些不能改（判断）</td>
+      </tr>
+      <tr>
+        <td><strong>核心单元</strong></td>
+        <td><code>SKILL.md</code>（Markdown + frontmatter）</td>
+        <td>Context Pack / State Capsule / Handoff Candidate</td>
+      </tr>
+      <tr>
+        <td><strong>复用维度</strong></td>
+        <td>跨项目复用</td>
+        <td>跨会话 / 跨 Agent 延续</td>
+      </tr>
+      <tr>
+        <td><strong>触发时机</strong></td>
+        <td>关键词 / 任务类型匹配自动唤醒</td>
+        <td>任务开始 / 结束 / 切换 / checkpoint</td>
+      </tr>
+      <tr>
+        <td><strong>沉淀方向</strong></td>
+        <td>把"动作"抽成 Skill</td>
+        <td>把"判断"留在文件</td>
+      </tr>
+      <tr>
+        <td><strong>对应三段</strong></td>
+        <td>事前 + 事中 + 事后（行为机制）</td>
+        <td>判断外置（状态机制）</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="callout ok" style="margin-top:0.8em">
+    <strong>真实路径：</strong>coi-forge 跑通 <code>plan-review-loop</code> / <code>impl-review-loop</code> 后抽到 <code>agent-skills</code> 仓库；同一项目用 worktrail handoff 跨 session 接力（<em>「请继续这个 handoff」</em>）。<u>行为 × 状态合力，业务正确性才不会随会话切换而漂移。</u>
+  </div>
+</section>
+
+<!-- 20. Closing · 4 sentences + invitation + Q&A -->
 <section class="cover" style="background:radial-gradient(ellipse at center, rgba(124,92,255,0.18), transparent 60%)">
   <div>
     <div class="super-title gradient" style="font-size:5em">三段控制 · 判断外置</div>
