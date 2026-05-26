@@ -585,6 +585,20 @@
 /* ---------- 隐藏左下角 logo（默认 reveal） ---------- */
 .reveal .slide-number { font-family: 'JetBrains Mono', monospace; color: var(--fg-muted); }
 
+/* ---------- 个人水印 · 每页左下角持续显示 ---------- */
+.reveal .watermark {
+  position: fixed;
+  bottom: 14px;
+  left: 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: rgba(230, 230, 240, 0.32);
+  letter-spacing: 0.06em;
+  z-index: 30;
+  pointer-events: none;
+  user-select: none;
+}
+
 /* ---------- 强调框 ---------- */
 .callout {
   border-left: 4px solid var(--accent);
