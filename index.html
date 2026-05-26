@@ -28,7 +28,7 @@
     <div class="author-line" style="margin-top:2em">
       <span>Nick Du</span>
       <span>Tech Sharing 2026</span>
-      <span>6 段实践 · 3 平台 · 方法沉淀</span>
+      <span>真实开发实践 · Cursor · Claude · Codex</span>
     </div>
   </div>
 </section>
@@ -102,7 +102,7 @@
   <div class="callout ok" style="margin-top:0.8em">
     <strong>真正要解决的目标不是"看完代码"，而是"保证业务正确性"。</strong>业务正确性 = 符合业务规则、遵守系统契约、不破坏不变量、没有漏掉必做项。
   </div>
-  <p class="footnote" style="margin-top:0.8em">我的实践样本：使用一段时间以来，在 6 段真实开发实践中使用 Cursor / Claude / Codex，并把过程中反复用到的方法沉淀成 agent-skills 和 worktrail。</p>
+  <p class="footnote" style="margin-top:0.8em">我的实践样本：使用一段时间以来，把 Cursor / Claude / Codex 用在真实开发实践中，并把过程中反复用到的方法沉淀成 agent-skills 和 worktrail。</p>
 </section>
 
 <!-- 4. Two-layer admission + 3 outlets -->
@@ -140,8 +140,8 @@
       <p style="font-size:0.88em">→ <strong>Evidence-as-Authority</strong><br/>契约 / 不变量 / Golden / 链路 / 证据包</p>
     </div>
     <div class="card" style="border-top:3px solid var(--accent-4)">
-      <h4 style="color:var(--accent-4)">判断外置</h4>
-      <p style="font-size:0.88em">→ <strong>判断外置</strong><br/>规则与决策痕迹沉淀到工具</p>
+      <h4 style="color:var(--accent-4)">❹ 判断外置</h4>
+      <p style="font-size:0.88em">→ <strong>跨会话不漂移</strong><br/>规则 / 决策 / 禁止 / 风险</p>
     </div>
   </div>
 </section>
@@ -172,7 +172,7 @@
     </div>
     <div class="card" style="border-top:3px solid var(--accent-3)">
       <h4 style="color:var(--accent-3)">③ 不变量</h4>
-      <p style="font-size:0.82em">无论怎么实现都必须成立的约束。<br/><strong>例：</strong><code>toko</code> / <code>toko-pro</code> 不能串源，<code>其它不变</code>。</p>
+      <p style="font-size:0.82em">无论怎么实现都必须成立的约束。<br/><strong>例：</strong><code>toko</code> / <code>toko-pro</code> 不能串源，<u>其它不变</u>。</p>
     </div>
     <div class="card" style="border-top:3px solid var(--accent-4)">
       <h4 style="color:var(--accent-4)">④ 必做 / 禁止项</h4>
@@ -241,7 +241,7 @@
   <h2>问题 ❷ · 业务判断怎么不漂移？<span class="gradient-cool">→ 判断外置</span></h2>
   <div class="glow-line"></div>
   <div class="callout" style="background:rgba(255,184,77,0.08);border-left:3px solid var(--accent-2)">
-    <strong>间接但关键：</strong>记忆管理本身不是业务正确性；但多轮对话、长会话、跨 Agent 协作时一旦丢掉业务判断，AI 就会写出业务不正确的代码。真正要保住的是<strong>为什么这样做、哪些不能改、哪些 fallback 被禁止、哪些风险没验证</strong>。
+    <strong>间接但关键：</strong>判断外置本身不是业务正确性；但多轮对话、长会话、跨 Agent 协作时一旦丢掉业务判断，AI 就会写出业务不正确的代码。真正要保住的是<strong>为什么这样做、哪些不能改、哪些 fallback 被禁止、哪些风险没验证</strong>。
   </div>
   <div class="grid grid-2" style="gap:1em;margin-top:1em">
     <div class="card" style="border-left:3px solid var(--accent-1)">
