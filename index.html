@@ -686,7 +686,47 @@ $ worktrail review plan --format json</code></pre>
   </div>
 </section>
 
-<!-- 17. Closing · 4 sentences + invitation + Q&A -->
+<!-- 17. Role shift · from code producer to boundary / review-gate designer -->
+<section class="slide-content">
+  <div class="slide-header">
+    <span class="num">15</span>
+    <span class="kicker">Role Shift</span>
+  </div>
+  <h2>人的角色转变 · <span class="gradient-cool">从代码生产者 → 业务边界 / review gate 的设计者</span></h2>
+  <div class="glow-line"></div>
+  <div class="callout" style="background:rgba(124,92,255,0.08);border-left:3px solid var(--accent);margin-bottom:0.8em">
+    AI 擅长把模式明确的具体编码任务又快又好地写出来。人需要换到 AI 不擅长的位置上：<strong>把业务边界讲清楚 / 把门禁定下来 / 把判断留下来</strong>。
+  </div>
+  <div class="two-col" style="gap:2em">
+    <div>
+      <h3 style="color:var(--danger)">⚠️ 传统协作 · 在"代码侧"兜底</h3>
+      <ul style="font-size:0.86em">
+        <li>主要工作是 <strong>逐行敲代码</strong></li>
+        <li>业务规则记在 <strong>脑子里 / 邮件 / 聊天</strong></li>
+        <li>review = <strong>逐行看 PR</strong>，靠人眼兜业务对错</li>
+        <li>出 bug → 人改 bug，<strong>经验留在脑子里</strong></li>
+        <li>接手项目 = <strong>逐文件读代码</strong>，靠回忆复原意图</li>
+        <li>决策散落在 <strong>commit message / 群聊</strong></li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="color:var(--accent-4)">✓ Vibe Coding · 在"业务边界 + 机制"位置</h3>
+      <ul style="font-size:0.86em">
+        <li><strong>① 业务意图注入端</strong>——写 AGENTS.md / 契约 / 不变量 / 必做项 / 验收标准</li>
+        <li><strong>② review gate 设计端</strong>——决定哪条链路要 Golden、哪个不变量必须自动校验、哪个要真实链路回归</li>
+        <li><strong>③ 假设 / 影响面 / 缺口的判定端</strong>——AI 摊开后由人拍板"是否还能往下走"</li>
+        <li><strong>④ 失败沉淀的整理端</strong>——把每次踩过的坑变成 Skill / Golden Case / 反例库</li>
+        <li><strong>⑤ 判断外置的搬运端</strong>——worktrail handoff / design doc / 决策日志</li>
+        <li><strong>⑥ AI 不擅长地带的执行者</strong>——跨系统口径协调、组织级权衡、需求对齐</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout ok" style="margin-top:0.8em">
+    人不再是 AI 的兜底，而是 AI 的 <strong>边界 / 门禁 / 判官</strong>。AI 写代码越快，这个角色越关键——它是唯一能保证业务正确性的一端。
+  </div>
+</section>
+
+<!-- 18. Closing · 4 sentences + invitation + Q&A -->
 <section class="cover" style="background:radial-gradient(ellipse at center, rgba(124,92,255,0.18), transparent 60%)">
   <div>
     <div class="super-title gradient" style="font-size:5em">三段控制 · 判断外置</div>
